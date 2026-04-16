@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Tai+Heritage+Pro:wght@400;700&display=swap');
+
+body {
+  display: var(--display-center);
+  place-items: var(--place-center);
+  min-height: 100vh;
+  background-color: #f4f4f4; /* Subtle background */
+}
+
+.form-container {
+  padding: 30px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  width: 350px;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  /* Text alignment inside the box */
+  text-align: center; 
+}
+
+.form-container ::placeholder {
+  color: #999;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.form-container h2 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.form-container input[type="text"],
+.form-container input[type="password"] {
+  border: transparent;
+  border-bottom: 2px solid #ccc;
+  outline: none;
+}
+.form-container input:focus {
+  border-bottom: 2px solid #000000;
+} 
+
+.form-container button {
+  background-color: #4988C4;
+  border-radius: 50px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+.hidden {
+  display: none;
+}
+
+input {
+  display: block;
+  margin-bottom: 15px;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box; /* Prevents input from leaking out of the box */
+}
+
+button {
+  cursor: pointer;
+  padding: 10px 20px;
+  width: 100%; /* Makes buttons easy to click on mobile */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
