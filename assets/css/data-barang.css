@@ -8,17 +8,37 @@
 }
 
 .main-tb-container tr{
-        border-collapse: collapse;
-        text-align: center;
-    }
+    border-collapse: collapse;
+    text-align: center;
+}
 
-    .main-tb-container th{
-        border-bottom: 2px solid black;
-        padding: 10px;
-    }
+.main-tb-container th{
+    border-bottom: 2px solid black;
+    padding: 10px;
+}
 
-    table{
-        border-collapse: collapse;
-        text-align: center;
-        box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.5);
-    }
+table{
+    border-collapse: collapse;
+    text-align: center;
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+.search-container{
+    display: flex;
+    padding: 10px;
+}
+
+.search-container input{
+    border: transparent;
+    background-color: rgb(222, 222, 222);
+    padding: 7px;
+    border-radius: 30px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.5);
+}
+
+.search-container input:focus{
+    border: 0px solid transparent;
+}

@@ -33,34 +33,34 @@
                 <thead>
                     <tr>
                         <th>Nama Barang</th>
+                        <th>Jumlah Stok</th>
                         <th>Satuan</th>
-                        <th>Stok Saat Ini</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Adrenaline</td>
-                        <td>Ampul</td>
                         <td>5</td>
+                        <td>Ampul</td>
                         <td><span class="status-available">Tersedia</span></td>
                     </tr>
                     <tr>
                         <td>HANDSCONE SIZE S</td>
-                        <td>Box</td>
                         <td>4</td>
+                        <td>Box</td>
                         <td><span class="status-available">Tersedia</span></td>
                     </tr>
                     <tr>
                         <td>HANDSCONE SIZE M</td>
-                        <td>Box</td>
                         <td>2</td>
+                        <td>Box</td>
                         <td><span class="status-available">Tersedia</span></td>
                     </tr>
                     <tr>
                         <td>HANDSCONE SIZE L</td>
-                        <td>Box</td>
                         <td>2</td>
+                        <td>Box</td>
                         <td><span class="status-available">Tersedia</span></td>
                     </tr>
                 </tbody>

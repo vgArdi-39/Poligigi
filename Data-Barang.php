@@ -15,49 +15,52 @@
     <main class="main-content">
         <h1>Data Barang</h1>
         <div class="main-tb-container">
+            <div class="search-container">
+                <input type="text">
+            </div>
             <table>
                 <thead>
                     <tr>
                         <th>Nama Barang</th>
-                        <th>Satuan</th>
                         <th>Stok</th>
+                        <th>Satuan</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Contoh Barang 1</td>
-                        <td>PCS</td>
                         <td>9</td>
+                        <td>PCS</td>
                     </tr>
                     <tr>
                         <td>Contoh Barang 2</td>
-                        <td>Box</td>
                         <td>22</td>
+                        <td>Box</td>
                     </tr>
                     <tr>
                         <td>Contoh Barang 3</td>
-                        <td>Ampul</td>
                         <td>15</td>
+                        <td>Ampul</td>
                     </tr>
                     <tr>
                         <td>Contoh Barang 4</td>
-                        <td>Box</td>
                         <td>12</td>
+                        <td>Box</td>
                     </tr>
                     <tr>
                         <td>Contoh Barang 5</td>
-                        <td>Liter</td>
                         <td>4</td>
+                        <td>Liter</td>
                     </tr>
                     <tr>
                         <td>Contoh Barang 6</td>
-                        <td>Roll</td>
                         <td>5</td>
+                        <td>Roll</td>
                     </tr>
                                         <tr>
                         <td>Contoh Barang 7</td>
-                        <td>Tube</td>
                         <td>6</td>
+                        <td>Tube</td>
                     </tr>
                 </tbody>
             </table>
