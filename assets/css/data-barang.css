@@ -23,22 +23,114 @@ table{
     box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
 }
+.Search-and-total {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 25%;
+}
 
-.search-container{
+.total-jenis-container {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #DEDEDE;
+  border-radius: 50px;
+  width: auto fit-content   ;
+  
+}
+
+.total-jenis-container h2 {
+  font-size: 12px;
+  margin: 0;
+}
+
+.search-container {
+  display: flex;
+  flex: 1;
+  padding: 12px 16px;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #DEDEDE;
+  border-radius: 50px;
+  gap: 5px;
+}
+
+.search-container input {
+  border: none;
+  width: 100%;
+  background-color: #DEDEDE;
+  outline: none;
+  height: 50%;
+  font-size: 16px;
+}
+
+.search-container svg{
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal {
+    background: white;
+    border-radius: 15px;
+    padding: 24px;
+    width: 400px;
     display: flex;
-    padding: 10px;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.search-container input{
-    border: transparent;
-    background-color: rgb(222, 222, 222);
-    padding: 7px;
-    border-radius: 30px;
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-body form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-body input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
     font-family: "Poppins", sans-serif;
-    font-weight: 600;
-    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.5);
 }
 
-.search-container input:focus{
-    border: 0px solid transparent;
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    font-family: inherit;
+}
+
+.modal-footer button,.main-tb-container button{
+    border: none;
+    box-shadow: 0 0  1px 1px rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+    font-family: inherit;
+    font-weight: 500;
 }
