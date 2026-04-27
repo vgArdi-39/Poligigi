@@ -33,20 +33,25 @@
 }
 
 .summary-stok-table{
-    background: white;
-    width: 100%;
-    text-align: center;
-    padding: 10px;
-    border-collapse: collapse;
-    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.5);
-    border-radius: 4px;
+  background: white;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  border-collapse: collapse;
+  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
 }
 
 .summary-stok-table th{
     border-bottom: 2px solid black;
 }
-
-.Ringkasan-Stok-Barang{
+.summary-stok-table td{
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+    text-align: justify;
+  }
+  
+  .Ringkasan-Stok-Barang{
     background: white;
     text-align: justify;
     padding: 20px;
@@ -54,4 +59,24 @@
     border-collapse: collapse;
     box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.5);
     border-radius: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+
+   .Ringkasan-Stok-Barang::-webkit-scrollbar {
+    border-radius: 15px;
+    width: 8px;
+  }
+
+  .Ringkasan-Stok-Barang::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 15px;
+}
+
+.Ringkasan-Stok-Barang::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
 }

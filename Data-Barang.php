@@ -19,10 +19,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $conn->query("UPDATE Barang SET nama_barang='$nama', satuan='$satuan' WHERE id_barang=$id");
     }
 
-    if ($action === 'hapus') {
-        $id = (int) $_POST['id'];
-        $conn->query("DELETE FROM Barang WHERE id_barang=$id");
-    }
+if ($action === 'hapus') {
+    $id = (int) $_POST['id'];
+
+    // Delete from Detail_Permintaan
+    $stmt = $conn->prepare("DELETE FROM Detail_Permintaan WHERE id_barang = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
+    // Delete from Barang_Keluar
+    $stmt = $conn->prepare("DELETE FROM Barang_Keluar WHERE id_barang = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
+    // Delete from Barang_Masuk
+    $stmt = $conn->prepare("DELETE FROM Barang_Masuk WHERE id_barang = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
+    // Finally delete from Barang
+    $stmt = $conn->prepare("DELETE FROM Barang WHERE id_barang = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+}
 
     header("Location: Data-Barang.php");
     exit();

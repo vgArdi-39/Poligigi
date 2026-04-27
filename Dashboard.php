@@ -1,5 +1,16 @@
-<?php $current_page = 'dashboard'; ?>
-<!DOCTYPE html>
+<?php $current_page = 'dashboard'; 
+include "assets/config.php";
+require_once "assets/session.php";
+
+$session = new Session();
+if ($session->get('logged_in') !== true) {
+    header("Location: index.php");
+    exit();
+}
+
+$result = $conn->query("SELECT * FROM V_Stok ORDER BY nama_barang ASC");
+$total  = $result->num_rows;
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +18,7 @@
     <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
 
+<body>
 <div class="dashboard-wrapper">
     <?php include('assets/sidebar.php'); ?>
 
@@ -15,7 +27,7 @@
         <div class="dashboard-cards">
             <div class="stat-card">
                 <h4>Total Jenis Barang</h4>
-                <p class="value">121</p>
+                <p class="value"><?= $total ?></p>
             </div>
             <div class="stat-card">
                 <h4>Placeholder</h4>
@@ -39,32 +51,25 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
-                        <td>Adrenaline</td>
-                        <td>5</td>
-                        <td>Ampul</td>
-                        <td><span class="status-available">Tersedia</span></td>
+                        <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                        <td><?= $row['jumlah_stok'] ?></td>
+                        <td><?= htmlspecialchars($row['satuan']) ?></td>
+                        <td>
+                            <?php if ($row['jumlah_stok'] > 10): ?>
+                                <span class="status in-stock">Stok tersedia</span>
+                            <?php elseif ($row['jumlah_stok'] > 0): ?>
+                                <span class="status low-stock">Stok hampir habis</span>
+                            <?php else: ?>
+                                <span class="status out-of-stock">Stok habis</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
-                    <tr>
-                        <td>HANDSCONE SIZE S</td>
-                        <td>4</td>
-                        <td>Box</td>
-                        <td><span class="status-available">Tersedia</span></td>
-                    </tr>
-                    <tr>
-                        <td>HANDSCONE SIZE M</td>
-                        <td>2</td>
-                        <td>Box</td>
-                        <td><span class="status-available">Tersedia</span></td>
-                    </tr>
-                    <tr>
-                        <td>HANDSCONE SIZE L</td>
-                        <td>2</td>
-                        <td>Box</td>
-                        <td><span class="status-available">Tersedia</span></td>
-                    </tr>
+                    <?php endwhile; ?>
                 </tbody>
             </table>
+        </div>
     </main>
 </div>
 
