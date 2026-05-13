@@ -127,7 +127,7 @@ while ($r = $query_produk->fetch_assoc()) {
                 <input type="hidden" name="jumlah"     id="hidden-jumlah">
                 <input type="hidden" name="keterangan" id="hidden-keterangan">
                 <div class="action-footer">
-                    <button type="submit" name="submit" value="submit" class="btn-confirm">Confirm</button>
+                <button type="button" class="btn-confirm" onclick="konfirmasiSimpan()">Confirm</button>
                 </div>
             </form>
         </section>
@@ -234,7 +234,7 @@ while ($r = $query_produk->fetch_assoc()) {
         }
 
         // Send all cart items to proses_barang_masuk.php (second's approach)
-        fetch('assets/proses_barang_masuk.php', {
+        fetch('proses_barang_masuk.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(cart.map(c => ({
