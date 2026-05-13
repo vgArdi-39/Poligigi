@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         </div>
     </form>
 </div>
+<div class="initialop" style="display: flex;"><form method="POST" action="assets/initop.php"><button type="submit">Init user</button></form></div>
 <script src="assets/Scripts/JS/Login.js"></script>
 </body>
 </html>

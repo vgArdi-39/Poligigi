@@ -60,6 +60,19 @@ body {
   font-weight: bold;
 }
 
+.nav-item.username {
+  padding: 12px 15px;
+  margin: 0 0 20px 0; /* Adds space below the username */
+  font-family: "Tai Heritage Pro", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+.nav-item.username .active-indic {
+  display: inline-block;
+  margin: 0 0 0 10px;
+  color: rgb(10, 132, 10);
+}
+
 .sidebar-logo {
   width: 40px;         /* Adjust size as needed */
   height: 40px;
@@ -93,7 +106,7 @@ body {
 }
 
 /* Logout Button specifically */
-.sidebar-nav .logout {
+.sidebar-nav .logout{
   margin-top: auto; /* The magic move to the bottom */
   color: #ff7675;
 }

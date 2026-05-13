@@ -1,7 +1,13 @@
 <?php 
 $current_page = 'data-barang';
 include('assets/config.php');
+require_once "assets/session.php";
 
+$session = new Session();
+if ($session->get('logged_in') !== true) {
+    header("Location: index.php");
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
@@ -149,5 +155,19 @@ $total  = $result->num_rows;
 </div>
 
 <script src="assets/Scripts/JS/DataBarang.js"></script>
+<script>
+    document.getElementById('search-input').addEventListener('input', function () {
+        const keyword = this.value.toLowerCase().trim();
+        const rows    = Array.from(document.querySelectorAll('tbody tr'));
+
+        rows.filter(row => !row.cells[0].textContent.toLowerCase().includes(keyword) &&
+                          !row.cells[2].textContent.toLowerCase().includes(keyword))
+            .forEach(row => row.style.display = 'none');
+
+        rows.filter(row => row.cells[0].textContent.toLowerCase().includes(keyword) ||
+                          row.cells[2].textContent.toLowerCase().includes(keyword))
+            .forEach(row => row.style.display = '');
+    });
+</script>
 </body>
 </html>

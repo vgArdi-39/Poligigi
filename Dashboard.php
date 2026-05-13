@@ -1,5 +1,5 @@
 <?php $current_page = 'dashboard'; 
-include "assets/config.php";
+require_once "assets/config.php";
 require_once "assets/session.php";
 
 $session = new Session();
@@ -23,15 +23,15 @@ $total  = $result->num_rows;
     <?php include('assets/sidebar.php'); ?>
 
     <main class="main-content">
-        <h1>Dashboard</h1>
+        <h1>Halo, <?= htmlspecialchars($session->get('username')) ?>!</h1>
         <div class="dashboard-cards">
             <div class="stat-card">
                 <h4>Total Jenis Barang</h4>
                 <p class="value"><?= $total ?></p>
             </div>
             <div class="stat-card">
-                <h4>Placeholder</h4>
-                <p class="value">0</p>
+                <h4>Jam</h4>
+                <p class="value" id="clock"></p>
             </div>
             <div class="stat-card">
                 <h4>Placeholder</h4>
@@ -72,6 +72,14 @@ $total  = $result->num_rows;
         </div>
     </main>
 </div>
+<script>
+        function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').textContent = now.toLocaleTimeString();
+    }
 
+    updateClock(); // run immediately
+    setInterval(updateClock, 1000); // then every second
+</script>
 </body>
 </html>
