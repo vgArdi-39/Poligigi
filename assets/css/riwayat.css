@@ -1,0 +1,241 @@
+:root {
+    --biru-tua: #0F2854;
+    --biru-muda: #4988C4;
+    --putih-biru: #ECF5FD;
+}
+
+/* Container Utama Tabel */
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Judul Tabel ala Katalog Barang */
+.table-title {
+    color: var(--biru-tua);
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-left: 5px solid var(--biru-muda);
+    padding-left: 12px;
+    line-height: 1.2;
+}
+
+/* Styling Bar Pencarian */
+.search-container {
+    margin: 20px 0;
+    width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid var(--biru-muda);
+    outline: none;
+    color: var(--biru-tua);
+    background: white;
+    transition: 0.3s;
+}
+
+.search-input:focus {
+    border-color: var(--biru-tua);
+    box-shadow: 0 0 8px rgba(73, 136, 196, 0.2);
+}
+
+/* Styling Tabel Data */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead tr {
+    border-bottom: 2px solid var(--biru-tua);
+}
+
+.data-table th {
+    padding: 12px 15px;
+    text-align: left;
+    color: var(--biru-tua);
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.data-table tr {
+    border-bottom: 1px solid rgba(15, 40, 84, 0.1);
+}
+
+.data-table td {
+    padding: 12px 15px;
+    color: var(--biru-tua);
+}
+
+/* Pagination di Sebelah Kanan */
+.pagination-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    gap: 5px;
+}
+
+.page-item {
+    padding: 8px 14px;
+    border: 1px solid var(--biru-muda);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--biru-muda);
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.active-page {
+    background-color: var(--biru-muda);
+    color: white !important;
+}
+
+.page-item:hover:not(.active-page) {
+    background-color: var(--putih-biru);
+}
+
+/* Stats Card di Atas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: var(--putih-biru);
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 5px solid var(--biru-muda);
+}
+
+.stat-label {
+    display: block;
+    color: var(--biru-tua);
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--biru-tua);
+}
+
+/* Modal / Popup Ekspor */
+.modal-overlay-riwayat {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content-riwayat {
+    background: white;
+    width: 450px;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header-riwayat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.modal-header-riwayat h4 {
+    color: var(--biru-tua);
+    font-weight: bold;
+    margin: 0;
+}
+
+.close-btn-riwayat {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--biru-tua);
+    line-height: 1;
+}
+
+.form-group-riwayat {
+    margin-bottom: 18px;
+}
+
+.form-group-riwayat label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--biru-tua);
+    font-weight: 600;
+}
+
+.input-riwayat-modal {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--biru-muda);
+    background: white;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form-row-riwayat {
+    display: flex;
+    gap: 15px;
+}
+
+/* Tombol Aksi */
+.btn-confirm-riwayat {
+    width: 100%;
+    padding: 14px;
+    background: var(--biru-tua);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.btn-confirm-riwayat:hover {
+    background: var(--biru-muda);
+}
+
+.export-actions {
+    margin-top: 30px;
+}
+
+.btn-export {
+    padding: 12px 30px;
+    background-color: var(--biru-tua);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-export:hover {
+    background-color: var(--biru-muda);
+}

@@ -1,4 +1,131 @@
-    .main-tb-container{
+/* ─── ACTION BAR ─────────────────────────────────────────── */
+/* data_barang.css (priority) */
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+/* ─── SEARCH & TOTAL ROW (data-barang.css — no conflict) ─── */
+.Search-and-total {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 25%;
+}
+
+.total-jenis-container {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background-color: #DEDEDE;
+    border-radius: 50px;
+    width: auto;
+}
+
+.total-jenis-container h2 {
+    font-size: 12px;
+    margin: 0;
+}
+
+/* ─── SEARCH INPUT ───────────────────────────────────────── */
+/* data_barang.css (priority) — pill search */
+.search-input {
+    width: 400px;
+    padding: 12px 25px;
+    border-radius: 30px;
+    border: none;
+    background-color: var(--putih-biru);
+    color: var(--biru-tua);
+    font-size: 15px;
+    outline: none;
+}
+
+/* data-barang.css alias — .search-container for pages using the flex wrapper */
+.search-container {
+    display: flex;
+    flex: 1;
+    padding: 12px 16px;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #DEDEDE;
+    border-radius: 50px;
+    gap: 5px;
+}
+
+.search-container input {
+    border: none;
+    width: 100%;
+    background-color: #DEDEDE;
+    outline: none;
+    height: 50%;
+    font-size: 16px;
+}
+
+.search-container svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* ─── ACTION BUTTONS ─────────────────────────────────────── */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-edit {
+    background-color: transparent;
+    border: 1px solid #0F2854;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-delete:hover {
+    background-color: #a71d2a;
+}
+
+.btn-add {
+    background-color: var(--biru-tua);
+    color: var(--putih-biru);
+    padding: 12px 25px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ─── TABLE CONTAINER ────────────────────────────────────── */
+/* data_barang.css (priority) */
+.table-container {
+    background-color: var(--putih-biru);
+    border-radius: 25px;
+    padding: 30px;
+    min-height: 500px;
+    position: relative;
+}
+
+/* data-barang.css: .main-tb-container for pages using that class */
+.main-tb-container {
     background-color: white;
     padding: 20px;
     text-align: center;
@@ -7,91 +134,123 @@
     border-radius: 15px;
 }
 
-.main-tb-container tr{
+.main-tb-container tr {
     border-collapse: collapse;
     text-align: justify;
 }
 
-.main-tb-container td{
+.main-tb-container td {
     border-bottom: 1px solid #d2d2d2;
     border-left: 1px solid #d2d2d2;
     border-right: 1px solid #d2d2d2;
     padding: 10px;
 }
 
-.main-tb-container th{
+.main-tb-container th {
     border-bottom: 2px solid black;
     padding: 10px;
 }
 
-table{
+/* ─── TABLE ──────────────────────────────────────────────── */
+/* data_barang.css (priority) */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 18px;
+    border-bottom: 2px solid var(--biru-tua);
+    color: var(--biru-tua);
+    font-weight: 700;
+}
+
+.data-table td {
+    padding: 15px 18px;
+    border-bottom: 1px solid rgba(73, 136, 196, 0.3);
+    color: var(--biru-tua);
+}
+
+/* Generic table (data-barang.css — used when no .data-table class) */
+table {
     border-collapse: collapse;
     text-align: center;
-    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
 }
-.Search-and-total {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  gap: 25%;
+
+/* ─── PAGINATION ─────────────────────────────────────────── */
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+    gap: 8px;
 }
 
-.total-jenis-container {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background-color: #DEDEDE;
-  border-radius: 50px;
-  width: auto fit-content   ;
-  
+.page-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background-color: var(--biru-tua);
+    color: var(--putih-biru);
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
 }
 
-.total-jenis-container h2 {
-  font-size: 12px;
-  margin: 0;
+.page-item.active-page {
+    background-color: var(--biru-muda);
 }
 
-.search-container {
-  display: flex;
-  flex: 1;
-  padding: 12px 16px;
-  justify-content: flex-end;
-  align-items: center;
-  background-color: #DEDEDE;
-  border-radius: 50px;
-  gap: 5px;
-}
-
-.search-container input {
-  border: none;
-  width: 100%;
-  background-color: #DEDEDE;
-  outline: none;
-  height: 50%;
-  font-size: 16px;
-}
-
-.search-container svg{
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-}
-
+/* ─── MODAL ──────────────────────────────────────────────── */
+/* data_barang.css (priority) — frosted glass overlay */
 .modal-overlay {
     display: none;
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    align-items: center;
-    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 40, 84, 0.15);
+    backdrop-filter: blur(12px);
     z-index: 999;
+    justify-content: center;
+    align-items: center;
 }
 
+/* data_barang.css (priority) — large rounded modal */
+.modal-content {
+    background-color: white;
+    padding: 45px;
+    border-radius: 30px;
+    width: 450px;
+    position: relative;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.modal-title {
+    color: black;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.close-modal {
+    position: absolute;
+    right: 30px;
+    top: 25px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: black;
+}
+
+/* data-barang.css: .modal alias (compact modal variant) */
 .modal {
     background: white;
     border-radius: 15px;
@@ -114,7 +273,7 @@ table{
     gap: 8px;
 }
 
-.modal-body form{
+.modal-body form {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -124,20 +283,75 @@ table{
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 .modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    font-family: inherit;
 }
 
-.modal-footer button,.main-tb-container button{
-    border: none;
-    box-shadow: 0 0  1px 1px rgba(0, 0, 0, 0.5);
+.modal-footer button,
+.main-tb-container button {
+    border-color: white;
+    padding: 2px;
+    background-color: rgba(0, 0, 0, 0.035);
     border-radius: 6px;
     font-family: inherit;
     font-weight: 500;
+}
+
+/* ─── FORM GROUPS ────────────────────────────────────────── */
+/* data_barang.css (priority) */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 15px;
+    border: none;
+    background-color: var(--putih-biru);
+    color: var(--biru-tua);
+    font-size: 16px;
+}
+
+/* ─── SAVE BUTTON ────────────────────────────────────────── */
+.btn-simpan {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--biru-muda);
+    color: white;
+    border: none;
+    border-radius: 40px;
+    font-size: 20px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: 0 6px 15px rgba(73, 136, 196, 0.4);
+}
+
+.action-tabledesc{
+    border: none;
+}
+
+.main-tb-container .btn-delete {
+    background-color: #dc3545 !important;
+    color: white !important;
+    opacity: 1 !important;
+}
+
+.main-tb-container .btn-edit {
+    background-color: white !important;
+    color: #0F2854 !important;
+    border: 1px solid #0F2854 !important;
 }

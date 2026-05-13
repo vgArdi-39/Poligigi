@@ -1,0 +1,171 @@
+:root {
+    --biru-tua: #0F2854;
+    --biru-muda: #4988C4;
+    --putih-biru: #ECF5FD;
+}
+
+/* Card & Table Section Styling */
+.card-input,
+.table-section {
+    background-color: var(--putih-biru);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(15, 40, 84, 0.15);
+    margin-bottom: 30px;
+}
+
+.card-title,
+.table-title {
+    color: var(--biru-tua);
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* Form Input */
+.input-group {
+    margin-bottom: 12px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid var(--biru-muda);
+    outline: none;
+    background: white;
+    color: var(--biru-tua);
+    box-sizing: border-box;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-main {
+    background-color: var(--biru-tua);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: var(--biru-muda);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+/* Tabel (Sesuai Gambar Referensi) */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.data-table th {
+    color: var(--biru-tua);
+    text-align: left;
+    padding: 15px 10px;
+    border-bottom: 2px solid rgba(15, 40, 84, 0.15);
+    font-weight: bold;
+}
+
+.data-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid rgba(15, 40, 84, 0.05);
+    color: var(--biru-tua);
+    font-size: 14px;
+}
+
+/* Button Confirm (Jarak sudah pas) */
+.action-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 35px;
+}
+
+.btn-confirm {
+    background-color: var(--biru-tua);
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Modal Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-card {
+    background: var(--putih-biru);
+    width: 400px;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--biru-tua);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--biru-tua);
+}
+
+.input-file-modal {
+    width: 100%;
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid var(--biru-muda);
+    border-radius: 10px;
+    background: white;
+}
+
+.btn-execute-import {
+    width: 100%;
+    padding: 12px;
+    background: var(--biru-tua);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}

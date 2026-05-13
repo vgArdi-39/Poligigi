@@ -1,140 +1,144 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Tai+Heritage+Pro:wght@400;700&display=swap');
+
+/* ─── CSS VARIABLES ──────────────────────────────────────── */
 :root {
-  /* Layout & Centering Helpers */
-  --display-center: grid;
-  --place-center: center;
-  
-  /* Sidebar Variables */
-  --sidebar-bg: #ECF5FD;
-  --sidebar-width: 250px;
-  --nav-hover: #34495e;
-  --text-main: #000000;
-  --text-muted: #000000;
-  --nav-hover: #dbeafe;
+    /* Sidebar */
+    --sidebar-bg: #ECF5FD;
+    --sidebar-width: 250px;
+    --nav-hover: #dbeafe;
+    --text-main: #000000;
+    --text-muted: #000000;
+
+    /* Layout helpers */
+    --display-center: grid;
+    --place-center: center;
+
+    /* Brand palette (shared with page-specific CSS) */
+    --biru-tua: #0F2854;
+    --biru-muda: #4988C4;
+    --putih-biru: #ECF5FD;
 }
 
-/* Reset */
+/* ─── RESET ──────────────────────────────────────────────── */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: "Poppins", sans-serif; /* Adding a clean font base */
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* The Layout Grid */
+/* ─── LAYOUT GRID ────────────────────────────────────────── */
 .dashboard-wrapper {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
-  min-height: 100vh;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    min-height: 100vh;
 }
 
-/* Sidebar Styling */
+/* ─── SIDEBAR ────────────────────────────────────────────── */
 .sidebar {
-  background-color: var(--sidebar-bg);
-  color: var(--text-main);
-  padding: 20px;
-  display: flex;
-  flex-direction: column; /* This allows the logout button trick */
-  box-sizing: border-box;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-  
+    background-color: var(--sidebar-bg);
+    color: var(--text-main);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 .sidebar-header {
-  display: flex;
-  align-items: center; 
-  gap: 12px;           
-  margin-bottom: 2rem; 
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2rem;
 }
 
 .sidebar-header h3 {
-  font-family: "Tai Heritage Pro", serif;
-  font-weight: 700;
-  margin: 0;           /* Removed the extra margin to keep it level */
-  font-size: 1.2rem;
-  color: var(--text-main);
+    font-family: 'Tai Heritage Pro', serif;
+    font-weight: 700;
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-main);
 }
 
 .sidebar-header a {
-  color: var(--text-main);
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.nav-item.username {
-  padding: 12px 15px;
-  margin: 0 0 20px 0; /* Adds space below the username */
-  font-family: "Tai Heritage Pro", serif;
-  font-weight: 700;
-  font-style: normal;
-}
-.nav-item.username .active-indic {
-  display: inline-block;
-  margin: 0 0 0 10px;
-  color: rgb(10, 132, 10);
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: bold;
 }
 
 .sidebar-logo {
-  width: 40px;         /* Adjust size as needed */
-  height: 40px;
-  object-fit: contain; /* Prevents stretching */
-  border-radius: 4px;  /* Optional: rounds corners of the logo */
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 4px;
 }
 
-/* Navigation Links */
+/* ─── SIDEBAR NAV ────────────────────────────────────────── */
 .sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1; /* Pushes the logout button down */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .sidebar-nav a {
-  display: block;
-  color: var(--text-muted);
-  font-family: "Tai Heritage Pro", serif;
-  font-weight: 700;
-  font-style: normal;
-  text-decoration: none;
-  padding: 12px 15px;
-  border-radius: 6px;
-  margin-bottom: 5px;
-  transition: 0.2s ease;
+    display: block;
+    color: var(--text-muted);
+    font-family: 'Tai Heritage Pro', serif;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    transition: 0.2s ease;
 }
 
 .sidebar-nav a:hover {
-  background-color: var(--nav-hover);
-  color: #1e40af;
+    background-color: var(--nav-hover);
+    color: #1e40af;
 }
 
-/* Logout Button specifically */
-.sidebar-nav .logout{
-  margin-top: auto; /* The magic move to the bottom */
-  color: #ff7675;
+.sidebar-nav .logout {
+    margin-top: auto;
+    color: #ff7675;
 }
 
-/* Content Area */
-.main-content {
-  padding: 40px;
-  background-color: #4988C4;
-}
-
-/* The normal state */
+/* ─── NAV ITEMS ──────────────────────────────────────────── */
 .nav-item {
-  transition: 0.3s;
-  color: var(--text-muted);
+    transition: 0.3s;
+    color: var(--text-muted);
+    padding: 12px 15px;
 }
 
-/* The active state (The link for the page you are currently on) */
 .nav-item.active {
-  background-color:   #4988C4;
-  color: white !important;
-  font-weight: bold;
+    background-color: var(--biru-muda);
+    color: white !important;
+    font-weight: bold;
 }
 
+/* Username display in sidebar */
+.nav-item.username {
+    padding: 12px 15px;
+    margin: 0 0 20px 0;
+    font-family: 'Tai Heritage Pro', serif;
+    font-weight: 700;
+}
+
+.nav-item.username .active-indic {
+    display: inline-block;
+    margin: 0 0 0 10px;
+    color: rgb(10, 132, 10);
+}
+
+/* ─── MAIN CONTENT ───────────────────────────────────────── */
+.main-content {
+    padding: 40px;
+    background-color: var(--biru-muda);
+}
+
+/* ─── ERROR / EMPTY STATE ────────────────────────────────── */
 .no-page-error-container {
-  display: var(--display-center); /* grid */
-  place-content: var(--place-center); /* center */
-  text-align: center;
-  min-height: 100vh; /* Takes up the full height of the screen */
-  padding: 20px;
-  box-sizing: border-box;
+    display: var(--display-center);
+    place-content: var(--place-center);
+    text-align: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
 }

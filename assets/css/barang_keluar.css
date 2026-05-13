@@ -1,0 +1,142 @@
+:root {
+    --biru-tua: #0F2854;
+    --biru-muda: #4988C4;
+    --putih-biru: #ECF5FD;
+}
+
+/* Layout & Cards */
+.request-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card-form, .card-summary, .table-container {
+    background-color: var(--putih-biru);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(15, 40, 84, 0.15);
+    color: var(--biru-tua);
+}
+
+.card-title {
+    color: var(--biru-tua);
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 35px;
+    display: block;
+}
+
+/* Form Inputs */
+.input-group-custom {
+    margin-bottom: 12px;
+}
+
+.input-group-custom input {
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 5px;
+    border-radius: 12px;
+    border: 2px solid var(--biru-muda);
+    background-color: var(--putih-biru);
+    color: var(--biru-tua);
+    outline: none;
+    font-weight: 500;
+}
+
+.btn-add-list {
+    background-color: var(--biru-muda);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-cancel-edit {
+    /* display: none diatur di inline HTML dan dikontrol JS */
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Summary Card */
+.summary-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 65px;
+}
+
+.total-number {
+    font-size: 85px;
+    font-weight: bold;
+    color: var(--biru-tua);
+    line-height: 0.8;
+}
+
+.total-label {
+    font-size: 16px;
+    color: var(--biru-muda);
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+/* Table Styling */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+    padding: 15px;
+    text-align: left;
+    color: var(--biru-tua);
+    border-bottom: 1px solid rgba(73, 136, 196, 0.2);
+}
+
+.th-aksi {
+    text-align: right !important;
+    padding-right: 75px !important;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-right: 20px;
+}
+
+/* Footer Buttons */
+.action-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(73, 136, 196, 0.3);
+}
+
+.btn-pdf, .btn-excel, .btn-confirm {
+    padding: 12px 25px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    color: white;
+    background-color: var(--biru-tua);
+    cursor: pointer;
+}
+
+.btn-edit-action { background-color: #ffc107; border: none; padding: 7px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.btn-delete-action { background-color: #dc3545; color: white; border: none; padding: 7px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
