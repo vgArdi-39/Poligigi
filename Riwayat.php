@@ -85,7 +85,7 @@ $pages_keluar = ceil($total_keluar / $limit);
                                 $ket = $row['keterangan'] ?? '-';
                             ?>
                                 <tr>
-                                    <td><?php echo date('d-m-Y', strtotime($row['tanggal'])); ?></td>
+                                    <td><?php echo date('d-m-Y H:i:s', strtotime($row['tanggal'])); ?></td>
                                     <td><?php echo strtoupper($nama); ?></td>
                                     <td><?php echo strtoupper($satuan); ?></td>
                                     <td><?php echo $row['jumlah']; ?></td>
@@ -128,7 +128,7 @@ $pages_keluar = ceil($total_keluar / $limit);
                                 $satuan_k = $data_bk['satuan'] ?? '-';
                             ?>
                                 <tr>
-                                    <td><?php echo date('d-m-Y', strtotime($rowk['tanggal'])); ?></td>
+                                    <td><?php echo date('d-m-Y H:i:s', strtotime($rowk['tanggal'])); ?></td>
                                     <td><?php echo strtoupper($nama_k); ?></td>
                                     <td><?php echo strtoupper($satuan_k); ?></td>
                                     <td><?php echo $rowk['jumlah']; ?></td>

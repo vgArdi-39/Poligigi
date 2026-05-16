@@ -51,29 +51,27 @@ while ($r = $query_produk->fetch_assoc()) {
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/data-barang.css">
     <link rel="stylesheet" href="assets/css/barang_masuk.css">
-    <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="assets/css/choices.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="dashboard-wrapper">
-    <?php include('assets/sidebar.php'); ?>
-
-    <main class="main-content">
-        <header class="content-header">
-            <h3>Barang Masuk</h3>
-        </header>
-
-        <?php if ($success): ?>
-            <p class="success"><?= htmlspecialchars($success) ?></p>
-        <?php endif; ?>
-        <?php if ($error): ?>
-            <p class="error"><?= htmlspecialchars($error) ?></p>
-        <?php endif; ?>
-
-        <!-- Input Form (second's UI — datalist + cart; first's form fields) -->
-        <section class="card-input">
-            <h4 class="card-title">Katalog Barang</h4>
+    <div class="dashboard-wrapper">
+        <?php include('assets/sidebar.php'); ?>
+        
+        <main class="main-content">
+            <header class="content-header">
+                <h3>Barang Masuk</h3>
+            </header>
+            
+            <?php if ($success): ?>
+                <p class="success"><?= htmlspecialchars($success) ?></p>
+                <?php endif; ?>
+                <?php if ($error): ?>
+                    <p class="error"><?= htmlspecialchars($error) ?></p>
+                    <?php endif; ?>
+                    
+                    <!-- Input Form (second's UI — datalist + cart; first's form fields) -->
+                    <section class="card-input">
+                        <h4 class="card-title">Katalog Barang</h4>
             <form id="formMasuk">
                 <!-- Searchable select via Choices.js (first) + datalist fallback (second) -->
                 <div class="input-group">
@@ -81,9 +79,9 @@ while ($r = $query_produk->fetch_assoc()) {
                         <option value="">Pilih Barang</option>
                         <?php foreach ($barang_rows as $row): ?>
                             <option value="<?= $row['id_barang'] ?>"
-                                    data-satuan="<?= htmlspecialchars($row['satuan']) ?>">
-                                <?= htmlspecialchars($row['nama_barang']) ?>
-                            </option>
+                            data-satuan="<?= htmlspecialchars($row['satuan']) ?>">
+                            <?= htmlspecialchars($row['nama_barang']) ?>
+                        </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -102,7 +100,7 @@ while ($r = $query_produk->fetch_assoc()) {
                 </div>
             </form>
         </section>
-
+        
         <!-- Cart Table (second's UI) -->
         <section class="table-section">
             <h4 class="table-title">Barang yang Baru Ditambahkan</h4>
@@ -120,14 +118,14 @@ while ($r = $query_produk->fetch_assoc()) {
                     <tr><td colspan="5" style="text-align:center;">Belum ada barang ditambahkan.</td></tr>
                 </tbody>
             </table>
-
+            
             <!-- Hidden form submits to first's POST handler -->
             <form method="POST" id="confirm-form" action="">
                 <input type="hidden" name="id_barang"  id="hidden-id-barang">
                 <input type="hidden" name="jumlah"     id="hidden-jumlah">
                 <input type="hidden" name="keterangan" id="hidden-keterangan">
                 <div class="action-footer">
-                <button type="button" class="btn-confirm" onclick="konfirmasiSimpan()">Confirm</button>
+                    <button type="button" class="btn-confirm" onclick="konfirmasiSimpan()">Confirm</button>
                 </div>
             </form>
         </section>
@@ -151,6 +149,8 @@ while ($r = $query_produk->fetch_assoc()) {
     </div>
 </div>
 
+<script src="assets/scripts/JS/choices.min.js"></script>
+<script src="assets/scripts/JS/xlsx.full.min.js"></script>
 <script>
     // ── Choices.js searchable select ────────────────────────────────────────
     const choicesMasuk = new Choices('#select-barang-masuk', {
@@ -160,16 +160,16 @@ while ($r = $query_produk->fetch_assoc()) {
         shouldSort: false,
         allowHTML: false
     });
-
+    
     // Auto-fill satuan when a barang is selected
     document.getElementById('select-barang-masuk').addEventListener('change', function () {
         const selected = this.options[this.selectedIndex];
         document.getElementById('satuan_auto').value = selected.dataset.satuan || '';
     });
-
+    
     // ── Cart logic ──────────────────────────────────────────────────────────
     let cart = [];
-
+    
     function tambahKeKeranjang() {
         const id_barang  = choicesMasuk.getValue(true);
         const jumlah     = parseInt(document.getElementById('jumlah').value);
@@ -177,35 +177,35 @@ while ($r = $query_produk->fetch_assoc()) {
         const satuan     = document.getElementById('satuan_auto').value.trim();
         const selectEl   = document.getElementById('select-barang-masuk');
         const nama       = selectEl.options[selectEl.selectedIndex]?.text || '';
-
+        
         if (!id_barang || !jumlah || jumlah < 1) {
             alert('Pilih barang dan masukkan jumlah yang valid.');
             return;
         }
-
+        
         const existing = cart.find(c => c.id_barang === id_barang);
         if (existing) {
             existing.jumlah += jumlah;
         } else {
             cart.push({ id_barang, nama, jumlah, satuan, keterangan });
         }
-
+        
         renderCart();
         choicesMasuk.setChoiceByValue('');
         document.getElementById('jumlah').value      = '';
         document.getElementById('keterangan').value  = '';
         document.getElementById('satuan_auto').value = '';
     }
-
+    
     function removeFromCart(index) {
         cart.splice(index, 1);
         renderCart();
     }
-
+    
     function renderCart() {
         const tbody = document.querySelector('#tabelKeranjang tbody');
         tbody.innerHTML = '';
-
+        
         if (cart.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada barang ditambahkan.</td></tr>';
             return;
@@ -213,18 +213,18 @@ while ($r = $query_produk->fetch_assoc()) {
 
         cart.forEach((item, i) => {
             tbody.innerHTML += `
-                <tr>
-                    <td>${item.nama}</td>
-                    <td>${item.satuan}</td>
-                    <td>${item.jumlah}</td>
-                    <td>${item.keterangan || '-'}</td>
-                    <td style="text-align:center;">
-                        <button class="btn-delete" onclick="removeFromCart(${i})">Hapus</button>
-                    </td>
-                </tr>`;
+            <tr>
+            <td>${item.nama}</td>
+            <td>${item.satuan}</td>
+            <td>${item.jumlah}</td>
+            <td>${item.keterangan || '-'}</td>
+            <td style="text-align:center;">
+            <button class="btn-delete" onclick="removeFromCart(${i})">Hapus</button>
+            </td>
+            </tr>`;
         });
     }
-
+    
     // On confirm: populate hidden fields for the first item in cart
     // For multi-item, each item submits via proses_barang_masuk.php via fetch (see below)
     function konfirmasiSimpan() {

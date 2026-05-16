@@ -126,7 +126,7 @@ $total       = $total_query ? $total_query->fetch_assoc()['c'] : 0;
                         <th>Nama Barang</th>
                         <th>Stok</th>
                         <th>Satuan</th>
-                        <th>Aksi</th>
+                        <th style="text-align: center;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>

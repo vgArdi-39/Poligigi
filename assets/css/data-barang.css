@@ -295,7 +295,9 @@ table {
 .modal-footer button,
 .main-tb-container button {
     border-color: white;
-    padding: 2px;
+    padding: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
     background-color: rgba(0, 0, 0, 0.035);
     border-radius: 6px;
     font-family: inherit;

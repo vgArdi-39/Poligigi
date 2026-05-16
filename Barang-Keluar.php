@@ -97,25 +97,20 @@ $barang_json = json_encode($barang_list);
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/data-barang.css">
     <link rel="stylesheet" href="assets/css/barang_keluar.css">
-    <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <!-- PDF & Excel export (second's libraries) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="assets/css/choices.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="dashboard-wrapper">
-    <?php include('assets/sidebar.php'); ?>
+    <div class="dashboard-wrapper">
+        <?php include('assets/sidebar.php'); ?>
 
-    <main class="main-content">
+        <main class="main-content">
         <header class="content-header">
             <h3>Barang Keluar</h3>
         </header>
-
+        
         <?php if ($success): ?>
             <p class="success"><?= htmlspecialchars($success) ?></p>
-        <?php endif; ?>
+            <?php endif; ?>
         <?php if ($error): ?>
             <p class="error"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
@@ -175,7 +170,7 @@ $barang_json = json_encode($barang_list);
                     <tr><td colspan="5">Belum ada barang ditambahkan.</td></tr>
                 </tbody>
             </table>
-
+            
             <form method="POST" id="confirm-form">
                 <input type="hidden" name="cart_data" id="cart-data-input">
                 <div class="action-footer">
@@ -190,6 +185,10 @@ $barang_json = json_encode($barang_list);
     </main>
 </div>
 
+<script src="assets/scripts/JS/choices.min.js"></script>
+<script src="assets/scripts/JS/jspdf.umd.min.js"></script>
+<script src="assets/scripts/JS/jspdf.plugin.autotable.min.js"></script>
+<script src="assets/scripts/JS/xlsx.full.min.js"></script>
 <script>
     const barangData = <?= $barang_json ?>;
     let cart = [];
@@ -202,7 +201,7 @@ $barang_json = json_encode($barang_list);
         shouldSort: false,
         allowHTML: false
     });
-
+    
     // Auto-fill satuan
     document.getElementById('select-barang').addEventListener('change', function () {
         const opt = this.options[this.selectedIndex];
@@ -219,63 +218,63 @@ $barang_json = json_encode($barang_list);
             alert('Pilih barang dan masukkan jumlah yang valid.');
             return;
         }
-
+        
         const id_barang = parseInt(id_barang_str);
         const barang    = barangData.find(b => parseInt(b.id_barang) === id_barang);
         if (!barang) { alert('Barang tidak ditemukan.'); return; }
-
+        
         const stok     = parseInt(barang.jumlah_stok);
         const existing = cart.find(c => c.id_barang === id_barang);
         const total    = (existing ? existing.jumlah : 0) + jumlah;
-
+        
         if (total > stok) {
             alert('Jumlah melebihi stok tersedia (' + stok + ')!');
             return;
         }
-
+        
         if (existing) {
             existing.jumlah = total;
         } else {
             cart.push({ id_barang, nama_barang: barang.nama_barang, satuan: barang.satuan, jumlah, keterangan });
         }
-
+        
         renderCart();
         choicesSelect.setChoiceByValue('');
         document.getElementById('input-jumlah').value     = '';
         document.getElementById('input-keterangan').value = '';
         document.getElementById('input-satuan').value     = '';
     }
-
+    
     function removeFromCart(index) {
         cart.splice(index, 1);
         renderCart();
     }
-
+    
     function renderCart() {
         const tbody = document.getElementById('cart-body');
         tbody.innerHTML = '';
-
+        
         document.getElementById('total_jenis').textContent = cart.length;
-
+        
         if (cart.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5">Belum ada barang ditambahkan.</td></tr>';
             document.getElementById('cart-data-input').value = '';
             return;
         }
-
+        
         cart.forEach((item, i) => {
             tbody.innerHTML += `
-                <tr>
-                    <td>${item.nama_barang}</td>
-                    <td>${item.satuan}</td>
-                    <td>${item.jumlah}</td>
-                    <td>${item.keterangan || '-'}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button type="button" class="btn-delete-action" onclick="removeFromCart(${i})">Hapus</button>
-                        </div>
-                    </td>
-                </tr>`;
+            <tr>
+            <td>${item.nama_barang}</td>
+            <td>${item.satuan}</td>
+            <td>${item.jumlah}</td>
+            <td>${item.keterangan || '-'}</td>
+            <td>
+            <div class="action-buttons">
+            <button type="button" class="btn-delete-action" onclick="removeFromCart(${i})">Hapus</button>
+            </div>
+            </td>
+            </tr>`;
         });
 
         document.getElementById('cart-data-input').value = JSON.stringify(cart);
@@ -287,7 +286,7 @@ $barang_json = json_encode($barang_list);
 
         if (type === 'pdf') {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF({orientation: 'portrait', unit: 'mm', format: 'a4'});
             doc.text('Daftar Barang Keluar', 14, 15);
             doc.autoTable({
                 startY: 22,
