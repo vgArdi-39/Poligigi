@@ -57,7 +57,7 @@ $result = $conn->query("SELECT * FROM V_Stok ORDER BY jumlah_stok ASC");
 
         <!-- Stock Summary (first's scrollable card + second's status badges) -->
         <div class="Ringkasan-Stok-Barang">
-            <h2>Ringkasan Stok Barang</h2>
+            <h2 style="padding-bottom:20px;">Ringkasan Stok Barang</h2>
             <table class="summary-stok-table">
                 <thead>
                     <tr>
