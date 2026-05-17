@@ -154,7 +154,7 @@ $barang_json = json_encode($barang_list);
         </section>
 
         <!-- Cart Table + confirm form (first's hidden cart_data approach) -->
-        <section class="table-container">
+        <section class="table-container" style="min-height: auto;">
             <h4 class="card-title">Daftar Permintaan</h4>
             <table class="data-table" id="tabelPermintaan">
                 <thead>
@@ -185,9 +185,82 @@ $barang_json = json_encode($barang_list);
     </main>
 </div>
 
+
+
+<div id="pdf-template" font-family="Arial, sans-serif;">
+
+        <style>
+        #pdf-template table,
+        #pdf-template th,
+        #pdf-template td,
+        #pdf-template tr {
+            border-radius: 0 !important;
+        }
+    </style>
+
+    <div class="judul" style="text-align: center; display: flex; flex-direction: row; align-items: center; gap: 15px;justify-content: center;">
+    <img src="assets/img/LogoPOLIJE.png" alt="Logo" style="width: 80px; height: auto; margin-bottom: 10px;">
+    
+    <div style="display: flex; flex-direction: column; column-height: 1.5;justify-content: center; align-items: center;">
+        <h4>KEMENTERIAN PENDIDIKAN TINGGI, SAINS, DAN TEKNOLOGI</h4>
+        <h4>POLITEKNIK NEGERI JEMBER</h4>
+        <h4>KLINIK PRATAMA</h4>
+        <h5>Jalan Mastrip Jember Kotak Pos 164, 68101 Telp.(0331) 333532-34 Faks 333531</h5>
+        <h5>Email: klinikpratama@polije.ac.id</h5>
+    </div>
+    </div>
+    <hr style="border: 1px solid black; margin-top: 20px;">
+    <table style="width:100%; border: 1px solid black; border-collapse: collapse; margin-top: 20px;">
+        <thead>
+            <tr style="background:#ffffff; color:black; border: 1px solid black; border-collapse: collapse;">
+                <th style="padding:8px; border: 1px solid black;">No</th>
+                <th style="padding:8px; border: 1px solid black;">Nama Barang</th>
+                <th style="padding:8px; border: 1px solid black;">Satuan</th>
+                <th style="padding:8px; border: 1px solid black;">Jumlah</th>
+                <th style="padding:8px; border: 1px solid black;">Keterangan</th>
+            </tr>
+        </thead>
+        <tbody id="pdf-body">
+            <!-- filled by JS before export -->
+        </tbody>
+    </table>
+
+    <div class="ttd_field" style="display: flex; flex-direction: row; justify-content: center; gap: 10%;">
+
+        <div class="ttd_item" style="margin-top: 50px; display: flex; flex-direction: column;">
+            <h5>Menyetujui,</h5>
+            <h5>Farmasi,</h5>
+            <div style="height: 80px;"></div>
+            <h5>..............................................</h5>
+        </div>
+        
+        <div class="ttd_item" style="margin-top: 50px; display: flex; flex-direction: column;">
+        <h5>Mengetahui,</h5>
+        <h5><br></h5>
+        <div style="height: 80px;"></div>
+        <h5>drg...........................................</h5>
+        </div>
+
+        <div class="ttd_item" style="margin-top: 50px; display: flex; flex-direction: column;">
+            <h5>Jember, _____________________</h5>
+            <h5>Pemohon</h5>
+            <div style="height: 80px;"></div>
+            <h5>..............................................</h5>
+            <h5>NIP/NRP.</h5>
+        </div>
+        
+    </div>
+</div>
+
+
+
+</body>
+</html>
+
+
+
 <script src="assets/scripts/JS/choices.min.js"></script>
-<script src="assets/scripts/JS/jspdf.umd.min.js"></script>
-<script src="assets/scripts/JS/jspdf.plugin.autotable.min.js"></script>
+<script src="assets/scripts/JS/html2pdf.bundle.min.js"></script>
 <script src="assets/scripts/JS/xlsx.full.min.js"></script>
 <script>
     const barangData = <?= $barang_json ?>;
@@ -281,20 +354,33 @@ $barang_json = json_encode($barang_list);
     }
 
     // ── Export (second's logic) ───────────────────────────────────────────────
-    function konfirmasiEkspor(type) {
-        if (cart.length === 0) { alert('Daftar permintaan masih kosong!'); return; }
+function konfirmasiEkspor(type) {
+    if (cart.length === 0) { alert('Daftar permintaan masih kosong!'); return; }
 
-        if (type === 'pdf') {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({orientation: 'portrait', unit: 'mm', format: 'a4'});
-            doc.text('Daftar Barang Keluar', 14, 15);
-            doc.autoTable({
-                startY: 22,
-                head: [['Nama Barang', 'Satuan', 'Jumlah', 'Keterangan']],
-                body: cart.map(i => [i.nama_barang, i.satuan, i.jumlah, i.keterangan || '-'])
-            });
-            doc.save('barang_keluar.pdf');
-        } else {
+    if (type === 'pdf') {
+        // fill the template
+        document.getElementById('pdf-body').innerHTML = cart.map((i, index) => `
+            <tr>
+                <td style="padding:8px; border:1px solid black; border-radius: 0px;">${index + 1}</td>
+                <td style="padding:8px; border:1px solid black; border-radius: 0px;">${i.nama_barang}</td>
+                <td style="padding:8px; border:1px solid black; border-radius: 0px;">${i.satuan}</td>
+                <td style="padding:8px; border:1px solid black; border-radius: 0px;">${i.jumlah}</td>
+                <td style="padding:8px; border:1px solid black; border-radius: 0px;">${i.keterangan || '-'}</td>
+            </tr>
+        `).join('');
+
+        const el = document.getElementById('pdf-template');
+        el.style.display = 'block';
+
+        html2pdf().set({
+            filename: 'barang_keluar.pdf',
+            margin: 10,
+            jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+            html2canvas: { scale: 2, useCORS: true }
+        }).from(el).save().then(() => {
+            el.style.display = 'none'; // hide again after export
+        });
+    } else if (type === 'excel') {
             const ws   = XLSX.utils.json_to_sheet(cart.map(i => ({
                 'Nama Barang': i.nama_barang, 'Satuan': i.satuan,
                 'Jumlah': i.jumlah, 'Keterangan': i.keterangan || '-'
