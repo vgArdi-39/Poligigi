@@ -149,8 +149,14 @@ while ($r = $query_produk->fetch_assoc()) {
     </div>
 </div>
 
+
+<script>
+    const dataBarang = <?= json_encode($barang_rows) ?>;
+</script>
+
 <script src="assets/scripts/JS/choices.min.js"></script>
 <script src="assets/scripts/JS/xlsx.full.min.js"></script>
+
 <script>
     // ── Choices.js searchable select ────────────────────────────────────────
     const choicesMasuk = new Choices('#select-barang-masuk', {
@@ -205,7 +211,7 @@ while ($r = $query_produk->fetch_assoc()) {
     function renderCart() {
         const tbody = document.querySelector('#tabelKeranjang tbody');
         tbody.innerHTML = '';
-        
+
         if (cart.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada barang ditambahkan.</td></tr>';
             return;
@@ -214,78 +220,96 @@ while ($r = $query_produk->fetch_assoc()) {
         cart.forEach((item, i) => {
             tbody.innerHTML += `
             <tr>
-            <td>${item.nama}</td>
-            <td>${item.satuan}</td>
-            <td>${item.jumlah}</td>
-            <td>${item.keterangan || '-'}</td>
-            <td style="text-align:center;">
-            <button class="btn-delete" onclick="removeFromCart(${i})">Hapus</button>
-            </td>
+                <td>${item.nama}</td>
+                <td>${item.satuan}</td>
+                <td>${item.jumlah}</td>
+                <td>${item.keterangan || '-'}</td>
+                <td style="text-align:center;">
+                    <button class="btn-delete" onclick="removeFromCart(${i})">Hapus</button>
+                </td>
             </tr>`;
         });
     }
     
-    // On confirm: populate hidden fields for the first item in cart
-    // For multi-item, each item submits via proses_barang_masuk.php via fetch (see below)
-    function konfirmasiSimpan() {
-        if (cart.length === 0) {
-            alert('Keranjang masih kosong!');
-            return;
+function konfirmasiSimpan() {
+    if (cart.length === 0) {
+        alert('Keranjang masih kosong!');
+        return;
+    }
+
+    fetch('proses_barang_masuk.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cart.map(c => ({
+            id_barang:  c.id_barang,
+            jumlah:     c.jumlah,
+            keterangan: c.keterangan
+        })))
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Barang berhasil disimpan!');
+            cart = [];
+            renderCart();
+        } else {
+            alert('Gagal: ' + data.message);
+        }
+    })
+    .catch(() => alert('Terjadi kesalahan jaringan.'));
+}
+
+function openModalImport()  { document.getElementById('modalImport').style.display = 'flex'; }
+function closeModalImport() { document.getElementById('modalImport').style.display = 'none'; }
+
+function prosesImportExcel() {
+    const file = document.getElementById('fileExcelInput').files[0];
+    if (!file) { alert('Pilih file terlebih dahulu.'); return; }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const wb   = XLSX.read(e.target.result, { type: 'binary' });
+        const ws   = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws);
+        const skipped = [];
+
+        rows.forEach(row => {
+            const namaBarang = (row['Nama'] || '').trim();
+            const barang = dataBarang.find(b =>
+                b.nama_barang.toLowerCase() === namaBarang.toLowerCase()
+            );
+
+            if (!barang) {
+                skipped.push(namaBarang || '(baris kosong)');
+                return;
+            }
+
+            const id_barang = parseInt(barang.id_barang); // ← consistent int
+            const existing  = cart.find(c => c.id_barang === id_barang);
+
+            if (existing) {
+                existing.jumlah += parseInt(row['Jumlah']) || 0; // ← merge duplicates
+            } else {
+                cart.push({
+                    id_barang,
+                    nama:       barang.nama_barang,
+                    jumlah:     parseInt(row['Jumlah']) || 0,
+                    satuan:     barang.satuan,
+                    keterangan: row['Keterangan'] || ''
+                });
+            }
+        });
+
+        if (skipped.length) {
+            alert(`⚠️ ${skipped.length} barang tidak ditemukan dan dilewati:\n\n` +
+                skipped.map(s => `• ${s}`).join('\n'));
         }
 
-        // Send all cart items to proses_barang_masuk.php (second's approach)
-        fetch('proses_barang_masuk.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(cart.map(c => ({
-                nama:   c.nama,
-                qty:    c.jumlah,
-                satuan: c.satuan,
-                ket:    c.keterangan
-            })))
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Barang berhasil disimpan!');
-                cart = [];
-                renderCart();
-            } else {
-                alert('Gagal: ' + data.message);
-            }
-        })
-        .catch(() => alert('Terjadi kesalahan jaringan.'));
-    }
-
-    // ── Import Excel (second's logic) ───────────────────────────────────────
-    function openModalImport()  { document.getElementById('modalImport').style.display = 'flex'; }
-    function closeModalImport() { document.getElementById('modalImport').style.display = 'none'; }
-
-    function prosesImportExcel() {
-        const file = document.getElementById('fileExcelInput').files[0];
-        if (!file) { alert('Pilih file terlebih dahulu.'); return; }
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const wb   = XLSX.read(e.target.result, { type: 'binary' });
-            const ws   = wb.Sheets[wb.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(ws);
-
-            rows.forEach(row => {
-                cart.push({
-                    id_barang:   '',
-                    nama:        row['Nama']   || '',
-                    jumlah:      parseInt(row['Jumlah']) || 0,
-                    satuan:      row['Satuan'] || '',
-                    keterangan:  ''
-                });
-            });
-
-            renderCart();
-            closeModalImport();
-        };
-        reader.readAsBinaryString(file);
-    }
+        renderCart();
+        closeModalImport();
+    };
+    reader.readAsBinaryString(file);
+}
 </script>
 </body>
 </html>

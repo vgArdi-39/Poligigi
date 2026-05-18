@@ -53,9 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
                 $keluar_stmt = $conn->prepare(
                     "INSERT INTO Barang_Keluar (id_permintaan, id_barang, jumlah, keterangan) VALUES (?, ?, ?, ?)"
                 );
-                $detail_stmt = $conn->prepare(
-                    "INSERT INTO Detail_Permintaan (id_permintaan, id_barang, jumlah) VALUES (?, ?, ?)"
-                );
 
                 foreach ($items as $item) {
                     $id_barang  = intval($item['id_barang']);
@@ -64,13 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
 
                     $keluar_stmt->bind_param("iiis", $id_permintaan, $id_barang, $jumlah, $keterangan);
                     $keluar_stmt->execute();
-
-                    $detail_stmt->bind_param("iii", $id_permintaan, $id_barang, $jumlah);
-                    $detail_stmt->execute();
                 }
 
                 $keluar_stmt->close();
-                $detail_stmt->close();
 
                 $success = "Barang berhasil dikeluarkan!";
             }
@@ -184,8 +177,6 @@ $barang_json = json_encode($barang_list);
         </section>
     </main>
 </div>
-
-
 
 <div id="pdf-template" font-family="Arial, sans-serif;">
 

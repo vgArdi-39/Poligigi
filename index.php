@@ -1,331 +1,621 @@
-<?php
-require_once 'assets/config.php';
-require_once 'assets/session.php';
+    <?php
+    require_once 'assets/config.php';
+    require_once 'assets/session.php';
+    require_once '.cred/mail.php';
+    require_once 'vendor/autoload.php';
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
 
-$session = new Session();
 
-if ($session->get('logged_in') === true) {
-    header("Location: dashboard.php");
-    exit();
-}
+    $session = new Session();
 
-$error = '';
+    if ($session->get('logged_in') === true) {
+        header("Location: dashboard.php");
+        exit();
+    }
 
-// ════════════ HANDLE LOGIN ════════════
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $error = '';
 
-    if (!empty($username) && !empty($password)) {
-        // Tambahkan pengambilan 'email' jika sewaktu-waktu dibutuhkan di session
-        $stmt = $conn->prepare("SELECT id_admin, username, email, password FROM admin WHERE username = ? LIMIT 1");
-        $stmt->bind_param("s", $username);
+    // ════════════ HANDLE LOGIN ════════════
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        if (!empty($username) && !empty($password)) {
+            // Tambahkan pengambilan 'email' jika sewaktu-waktu dibutuhkan di session
+            $stmt = $conn->prepare("SELECT id_admin, username, email, password FROM admin WHERE username = ? LIMIT 1");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+
+            if ($user && password_verify($password, $user['password'])) {
+                $session->set('logged_in', true);
+                $session->set('username', $user['username']);
+                $session->set('email', $user['email']);
+                $session->set('id_admin', $user['id_admin']);
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                $error = "Username atau password salah.";
+            }
+            $stmt->close();
+        } else {
+            $error = "Harap isi username dan password.";
+        }
+    }
+
+    // ════════════ HANDLE REGISTRATION ════════════
+    $reg_error = '';
+    $reg_success = '';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
+        $reg_user       = trim($_POST['reg_user'] ?? '');
+        $reg_email      = trim($_POST['reg_email'] ?? '');
+        $reg_pass       = $_POST['reg_pass'] ?? '';
+        $reg_pass_confirm = $_POST['reg_pass_confirm'] ?? '';
+
+        if (empty($reg_user) || empty($reg_email) || empty($reg_pass) || empty($reg_pass_confirm)) {
+            $reg_error = "Semua kolom wajib diisi.";
+        } elseif (!filter_var($reg_email, FILTER_VALIDATE_EMAIL)) {
+            $reg_error = "Format email tidak valid.";
+        } elseif ($reg_pass !== $reg_pass_confirm) {
+            $reg_error = "Konfirmasi password tidak cocok.";
+        } elseif (strlen($reg_pass) < 6) {
+            $reg_error = "Password minimal 6 karakter.";
+        } else {
+            // Cek apakah username atau email sudah digunakan
+            $stmt_check = $conn->prepare("SELECT id_admin FROM admin WHERE username = ? OR email = ? LIMIT 1");
+            $stmt_check->bind_param("ss", $reg_user, $reg_email);
+            $stmt_check->execute();
+            $stmt_check->store_result();
+
+            if ($stmt_check->num_rows > 0) {
+                $reg_error = "Username atau Email sudah terdaftar.";
+            } else {
+                // Lakukan Insert user baru
+                $hashed_password = password_hash($reg_pass, PASSWORD_DEFAULT);
+                $stmt_insert = $conn->prepare("INSERT INTO admin (username, email, password) VALUES (?, ?, ?)");
+                $stmt_insert->bind_param("sss", $reg_user, $reg_email, $hashed_password);
+
+                if ($stmt_insert->execute()) {
+                    $reg_success = "Pendaftaran berhasil! Silakan login.";
+                    // Mengosongkan field setelah berhasil
+                    $_POST['reg_user'] = '';
+                    $_POST['reg_email'] = '';
+                    } else {
+                        $reg_error = "Terjadi kesalahan sistem saat mendaftar.";
+                        }
+                        $stmt_insert->close();
+                        }
+                        $stmt_check->close();
+                        }
+                        }
+                        
+    // ════════════ HANDLE FORGOT PASSWORD ════════════
+    $forgot_error   = '';
+    $forgot_success = '';
+
+    if (isset($_GET['forgot']) && $_GET['forgot'] === 'sent') {
+    $forgot_success = "Jika email terdaftar, link reset password telah dikirim.";
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_password'])) {
+        $forgot_email = trim($_POST['forgot_email'] ?? '');
+
+        if (empty($forgot_email) || !filter_var($forgot_email, FILTER_VALIDATE_EMAIL)) {
+            $forgot_error = "Masukkan alamat email yang valid.";
+        } else {
+            $stmt = $conn->prepare("SELECT id_admin FROM admin WHERE email = ? LIMIT 1");
+            $stmt->bind_param("s", $forgot_email);
+            $stmt->execute();
+            $stmt->store_result();
+
+            if ($stmt->num_rows > 0) {
+                $token   = bin2hex(random_bytes(32));
+
+                $del = $conn->prepare("DELETE FROM password_resets WHERE email = ?");
+                $del->bind_param("s", $forgot_email);
+                $del->execute();
+                $del->close();
+
+                $ins = $conn->prepare(
+                        "INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))"
+                        );
+                $ins->bind_param("ss", $forgot_email, $token);
+                $ins->execute();
+                $ins->close();
+
+                $mail = new PHPMailer(true);
+                try {
+                    $mail->isSMTP();
+                    $mail->Host       = 'smtp.gmail.com';
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = $MailerMail;
+                    $mail->Password   = $MailerPassword;
+                    $mail->SMTPSecure = 'tls';
+                    $mail->Port       = 587;
+
+                    $mail->setFrom($MailerMail, 'Poliklinik Admin');
+                    $mail->addAddress($forgot_email);
+                    $mail->Subject = 'Reset Password - Sistem Poliklinik';
+
+                    // Link points back to index.php with the token
+                    $reset_link = "http://localhost/poligigi/index.php?token=" . $token;
+                    $mail->isHTML(true);
+                    $mail->Body = "
+                        <p>Klik link berikut untuk mereset password Anda:</p>
+                        <p><a href='$reset_link'>$reset_link</a></p>
+                        <p>Link berlaku selama <strong>1 jam</strong>.</p>
+                        <p>Jika Anda tidak meminta ini, abaikan email ini.</p>
+                    ";
+                    $mail->send();
+                } catch (Exception $e) {
+                    error_log("Mailer Error: " . $mail->ErrorInfo);
+                    $forgot_error = "Gagal mengirim email: " . $mail->ErrorInfo; // ← add this line
+
+                }
+            }
+            $stmt->close();
+            $forgot_success = "Jika email terdaftar, link reset password telah dikirim.";
+
+            header("Location: index.php?forgot=sent");
+            exit();
+        }
+
+
+    }
+
+    // ════════════ HANDLE RESET PASSWORD (token from email link) ════════════
+    $reset_error   = '';
+    $reset_success = '';
+    $reset_token   = trim($_GET['token'] ?? '');
+    $reset_valid   = false;
+    $reset_email   = '';
+
+    if (!empty($reset_token)) {
+        $stmt = $conn->prepare(
+            "SELECT email FROM password_resets
+            WHERE token = ? AND expires_at > NOW() AND used = 0 LIMIT 1"
+        );
+        $stmt->bind_param("s", $reset_token);
         $stmt->execute();
         $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
-
-        if ($user && password_verify($password, $user['password'])) {
-            $session->set('logged_in', true);
-            $session->set('username', $user['username']);
-            $session->set('email', $user['email']);
-            $session->set('id_admin', $user['id_admin']);
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            $error = "Username atau password salah.";
-        }
+        $row    = $result->fetch_assoc();
         $stmt->close();
-    } else {
-        $error = "Harap isi username dan password.";
-    }
-}
 
-// ════════════ HANDLE REGISTRATION ════════════
-$reg_error = '';
-$reg_success = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
-    $reg_user       = trim($_POST['reg_user'] ?? '');
-    $reg_email      = trim($_POST['reg_email'] ?? '');
-    $reg_pass       = $_POST['reg_pass'] ?? '';
-    $reg_pass_confirm = $_POST['reg_pass_confirm'] ?? '';
-
-    if (empty($reg_user) || empty($reg_email) || empty($reg_pass) || empty($reg_pass_confirm)) {
-        $reg_error = "Semua kolom wajib diisi.";
-    } elseif (!filter_var($reg_email, FILTER_VALIDATE_EMAIL)) {
-        $reg_error = "Format email tidak valid.";
-    } elseif ($reg_pass !== $reg_pass_confirm) {
-        $reg_error = "Konfirmasi password tidak cocok.";
-    } elseif (strlen($reg_pass) < 6) {
-        $reg_error = "Password minimal 6 karakter.";
-    } else {
-        // Cek apakah username atau email sudah digunakan
-        $stmt_check = $conn->prepare("SELECT id_admin FROM admin WHERE username = ? OR email = ? LIMIT 1");
-        $stmt_check->bind_param("ss", $reg_user, $reg_email);
-        $stmt_check->execute();
-        $stmt_check->store_result();
-
-        if ($stmt_check->num_rows > 0) {
-            $reg_error = "Username atau Email sudah terdaftar.";
+        if ($row) {
+            $reset_valid = true;
+            $reset_email = $row['email'];
         } else {
-            // Lakukan Insert user baru
-            $hashed_password = password_hash($reg_pass, PASSWORD_DEFAULT);
-            $stmt_insert = $conn->prepare("INSERT INTO admin (username, email, password) VALUES (?, ?, ?)");
-            $stmt_insert->bind_param("sss", $reg_user, $reg_email, $hashed_password);
-
-            if ($stmt_insert->execute()) {
-                $reg_success = "Pendaftaran berhasil! Silakan login.";
-                // Mengosongkan field setelah berhasil
-                $_POST['reg_user'] = '';
-                $_POST['reg_email'] = '';
-            } else {
-                $reg_error = "Terjadi kesalahan sistem saat mendaftar.";
-            }
-            $stmt_insert->close();
+            $reset_error = "Link tidak valid atau sudah kedaluwarsa.";
         }
-        $stmt_check->close();
     }
-}
-?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="data:,">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Login Poliklinik</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        /* ── PHP error banner ── */
-        .php-error {
-            background: #fee2e2;
-            color: #b91c1c;
-            border: 1px solid #fca5a5;
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            font-size: 0.875rem;
-            text-align: center;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password'])) {
+        $post_token   = $_POST['reset_token']   ?? '';
+        $new_pass     = $_POST['new_pass']       ?? '';
+        $confirm_pass = $_POST['confirm_pass']   ?? '';
+
+        // Re-validate token from POST
+        $stmt = $conn->prepare(
+            "SELECT email FROM password_resets
+            WHERE token = ? AND expires_at > NOW() AND used = 0 LIMIT 1"
+        );
+        $stmt->bind_param("s", $post_token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row    = $result->fetch_assoc();
+        $stmt->close();
+
+        if (!$row) {
+            $reset_error = "Link tidak valid atau sudah kedaluwarsa.";
+        } elseif (strlen($new_pass) < 6) {
+            $reset_error  = "Password minimal 6 karakter.";
+            $reset_valid  = true;
+            $reset_email  = $row['email'];
+            $reset_token  = $post_token;
+        } elseif ($new_pass !== $confirm_pass) {
+            $reset_error  = "Konfirmasi password tidak cocok.";
+            $reset_valid  = true;
+            $reset_email  = $row['email'];
+            $reset_token  = $post_token;
+        } else {
+            $hashed = password_hash($new_pass, PASSWORD_DEFAULT);
+
+            $upd = $conn->prepare("UPDATE admin SET password = ? WHERE email = ?");
+            $upd->bind_param("ss", $hashed, $row['email']);
+            $upd->execute();
+            $upd->close();
+
+            $mark = $conn->prepare("UPDATE password_resets SET used = 1 WHERE token = ?");
+            $mark->bind_param("s", $post_token);
+            $mark->execute();
+            $mark->close();
+
+            $reset_success = "Password berhasil diubah! Silakan login.";
+            $reset_valid   = false;
         }
-        .php-success {
-            background: #dcfce7;
-            color: #15803d;
-            border: 1px solid #86efac;
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            font-size: 0.875rem;
-            text-align: center;
-        }
-        /* Show login page with error automatically */
-        .show-login  #page-login  { display: flex !important; }
-        .show-login  #page-register { display: none !important; }
-        .show-register #page-register { display: flex !important; }
-        .show-register #page-login  { display: none !important; }
-    </style>
-</head>
-<body class="<?= !empty($error) ? 'show-login' : (!empty($reg_error) || !empty($reg_success) ? 'show-register' : '') ?>">
+    }
+    ?>
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="data:,">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sistem Login Poliklinik</title>
+        <link rel="stylesheet" href="assets/css/style.css">
+        <style>
+            /* ── PHP error banner ── */
+            .php-error {
+                background: #fee2e2;
+                color: #b91c1c;
+                border: 1px solid #fca5a5;
+                border-radius: 8px;
+                padding: 10px 14px;
+                margin-bottom: 12px;
+                font-size: 0.875rem;
+                text-align: center;
+            }
+            .php-success {
+                background: #dcfce7;
+                color: #15803d;
+                border: 1px solid #86efac;
+                border-radius: 8px;
+                padding: 10px 14px;
+                margin-bottom: 12px;
+                font-size: 0.875rem;
+                text-align: center;
+            }
+            .show-login  #page-login  { display: flex !important; }
+            .show-login  #page-register { display: none !important; }
+            
+            .show-register #page-register { display: flex !important; }
+            .show-register #page-login  { display: none !important; }
 
-    <div id="main-content" class="main-wrapper">
+            .show-forgot  #page-forgot         { display: flex !important; }
+            .show-forgot  #page-login          { display: none !important; }
+            .show-forgot  #page-register       { display: none !important; }
 
-        <div id="page-login" class="container">
-            <div class="card">
-                <h2 class="title">LOGIN</h2>
+            .show-reset   #page-reset-password { display: flex !important; }
+            .show-reset   #page-login          { display: none !important; }
+            .show-reset   #page-register       { display: none !important; }
+            .show-reset   #page-forgot         { display: none !important; }
+        </style>
+    </head>
+    <body class="<?php
+        if (!empty($error))                                                     echo 'show-login';
+        elseif (!empty($reg_error) || !empty($reg_success))                     echo 'show-register';
+        elseif (!empty($forgot_error) || !empty($forgot_success))               echo 'show-forgot';
+        elseif ($reset_valid || !empty($reset_error) || !empty($reset_success)) echo 'show-reset';
+    ?>">
 
-                <?php if (!empty($error)): ?>
-                    <div class="php-error"><?= htmlspecialchars($error) ?></div>
-                <?php endif; ?>
+        <div id="main-content" class="main-wrapper">
 
-                <form method="POST" action="" id="login-form">
-                    <div class="input-group">
-                        <label>User Name</label>
-                        <input
-                            type="text"
-                            id="username_login"
-                            name="username"
-                            placeholder="Masukkan User Name anda"
-                            value="<?= htmlspecialchars($_POST['username'] ?? '') ?>"
-                        >
-                        <span class="error-msg" id="error-username_login"></span>
-                    </div>
+            <!-- LOGIN PANEL -->
+            <div id="page-login" class="container">
+                <div class="card">
+                    <h2 class="title">LOGIN</h2>
 
-                    <div id="password-inline-group" class="input-group <?= empty($error) ? 'hidden' : '' ?>">
-                        <label>Kata Sandi</label>
-                        <div class="password-container">
-                            <input type="password" id="password-inline" name="password" placeholder="Masukkan Kata Sandi anda">
-                            <div class="eye-btn" onclick="toggleRegisterPass('password-inline', this)">
-                                <img src="assets/img/mataTutup.png" alt="eye" class="eye-icon-img">
-                            </div>
+                    <?php if (!empty($error)): ?>
+                        <div class="php-error"><?= htmlspecialchars($error) ?></div>
+                    <?php endif; ?>
+
+                    <form method="POST" action="" id="login-form">
+                        <div class="input-group">
+                            <label>User Name</label>
+                            <input
+                                type="text"
+                                id="username_login"
+                                name="username"
+                                placeholder="Masukkan User Name anda"
+                                value="<?= htmlspecialchars($_POST['username'] ?? '') ?>"
+                            >
+                            <span class="error-msg" id="error-username_login"></span>
                         </div>
-                        <span class="error-msg" id="error-password-inline"></span>
+
+                        <div id="password-inline-group" class="input-group <?= empty($error) ? 'hidden' : '' ?>">
+                            <label>Kata Sandi</label>
+                            <div class="password-container">
+                                <input type="password" id="password-inline" name="password" placeholder="Masukkan Kata Sandi anda">
+                                <div class="eye-btn" onclick="toggleRegisterPass('password-inline', this)">
+                                    <img src="assets/img/mataTutup.png" alt="eye" class="eye-icon-img">
+                                </div>
+                            </div>
+                            <span class="error-msg" id="error-password-inline"></span>
+                        </div>
+
+                        <div class="forgot-right" id="forgot-login" style="<?= empty($error) ? 'display:none' : '' ?>">
+                            <span class="link-blue" style="cursor:pointer" onclick="switchPage('page-forgot')">Lupa kata sandi?</span>
+                        </div>
+
+                        <button type="button" class="btn-next" id="btn-next-login" onclick="openPasswordInline()" <?= !empty($error) ? 'style="display:none"' : '' ?>>
+                            Selanjutnya
+                        </button>
+
+                        <button type="submit" name="login" class="btn-next" id="btn-submit-login" <?= empty($error) ? 'style="display:none"' : '' ?>>
+                            MASUK
+                        </button>
+                    </form>
+
+                    <div class="footer-text">
+                        <a href="#" class="link-blue" onclick="switchPage('page-forgot'); return false;">
+                            Lupa kata sandi?
+                        </a>
+                        <p>Belum punya akun? <br>
+                            <span class="link-blue" style="cursor:pointer" onclick="switchPage('page-register')">Daftar sekarang</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- REGISTER PANEL --> 
+            <div id="page-register" class="container hidden">
+                <div class="card card-wide" style="position: relative;">
+                    <div class="back-arrow" onclick="switchPage('page-login')">
+                        <img src="assets/img/panah.png" alt="Back" class="back-icon-img">
                     </div>
 
-                    <div class="forgot-right" id="forgot-login" style="<?= empty($error) ? 'display:none' : '' ?>">
-                        <a href="#" class="link-blue">Lupa kata sandi?</a>
+                    <h2 class="title">DAFTAR</h2>
+
+                    <?php if (!empty($reg_error)): ?>
+                        <div class="php-error"><?= htmlspecialchars($reg_error) ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($reg_success)): ?>
+                        <div class="php-success"><?= htmlspecialchars($reg_success) ?></div>
+                    <?php endif; ?>
+
+                    <form method="POST" action="">
+                        <div class="input-group">
+                            <label>Username</label>
+                            <input type="text" id="reg_user" name="reg_user" placeholder="Masukkan Username anda"
+                                value="<?= htmlspecialchars($_POST['reg_user'] ?? '') ?>">
+                            <span class="error-msg" id="error-reg_user"></span>
+                        </div>
+                        <div class="input-group">
+                            <label>Email</label>
+                            <input type="email" id="reg_email" name="reg_email" placeholder="contoh: nama@gmail.com"
+                                value="<?= htmlspecialchars($_POST['reg_email'] ?? '') ?>">
+                            <span class="error-msg" id="error-reg_email"></span>
+                        </div>
+                        <div class="input-group">
+                            <label>Password</label>
+                            <div class="password-container">
+                                <input type="password" id="reg_pass" name="reg_pass" placeholder="Password minimal 6 karakter">
+                                <div class="eye-btn" onclick="toggleRegisterPass('reg_pass', this)">
+                                    <img src="assets/img/mataTutup.png" alt="eye" class="eye-icon-img">
+                                </div>
+                            </div>
+                            <span class="error-msg" id="error-reg_pass"></span>
+                        </div>
+                        <div class="input-group">
+                            <label>Konfirmasi Password</label>
+                            <div class="password-container">
+                                <input type="password" id="reg_pass_confirm" name="reg_pass_confirm" placeholder="Masukkan ulang password anda">
+                                <div class="eye-btn" onclick="toggleRegisterPass('reg_pass_confirm', this)">
+                                    <img src="assets/img/mataTutup.png" alt="eye" class="eye-icon-img">
+                                </div>
+                            </div>
+                            <span class="error-msg" id="error-reg_pass_confirm"></span>
+                        </div>
+                        <button type="submit" name="register" class="btn-next" onclick="return handleRegister()">Daftar</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- FORGOT PASSWORD PANEL -->
+            <div id="page-forgot" class="container hidden">
+                <div class="card" style="position:relative;">
+
+                    <div class="back-arrow" onclick="switchPage('page-login')">
+                        <img src="assets/img/panah.png" alt="Back" class="back-icon-img">
                     </div>
 
-                    <button type="button" class="btn-next" id="btn-next-login" onclick="openPasswordInline()" <?= !empty($error) ? 'style="display:none"' : '' ?>>
-                        Selanjutnya
-                    </button>
-
-                    <button type="submit" name="login" class="btn-next" id="btn-submit-login" <?= empty($error) ? 'style="display:none"' : '' ?>>
-                        MASUK
-                    </button>
-                </form>
-
-                <div class="footer-text">
-                    <a href="#" class="link-blue">Lupa kata sandi?</a>
-                    <p>Belum punya akun? <br>
-                        <span class="link-blue" style="cursor:pointer" onclick="switchPage('page-register')">Daftar sekarang</span>
+                    <h2 class="title">LUPA PASSWORD</h2>
+                    <p style="text-align:center;color:#6b7280;margin-bottom:20px;font-size:.9rem;">
+                        Masukkan email Anda, kami akan mengirimkan link reset password.
                     </p>
+
+                    <?php if (!empty($forgot_error)): ?>
+                        <div class="php-error"><?= htmlspecialchars($forgot_error) ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($forgot_success)): ?>
+                        <div class="php-success"><?= htmlspecialchars($forgot_success) ?></div>
+                    <?php endif; ?>
+
+                    <?php if (empty($forgot_success)): ?>
+                    <form method="POST" action="">
+                        <div class="input-group">
+                            <label>Email</label>
+                            <input type="email" name="forgot_email"
+                                placeholder="contoh: nama@gmail.com"
+                                value="<?= htmlspecialchars($_POST['forgot_email'] ?? '') ?>">
+                            <span class="error-msg" id="error-forgot_email"></span>
+                        </div>
+                        <button type="submit" name="forgot_password" class="btn-next">
+                            Kirim Link Reset
+                        </button>
+                    </form>
+                    <?php endif; ?>
+
+                    <div class="footer-text" style="margin-top:16px;text-align:center;">
+                        <span class="link-blue" style="cursor:pointer"
+                            onclick="switchPage('page-login')">← Kembali ke Login</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="page-register" class="container hidden">
-            <div class="card card-wide" style="position: relative;">
-                <div class="back-arrow" onclick="switchPage('page-login')">
-                    <img src="assets/img/panah.png" alt="Back" class="back-icon-img">
+            <!-- RESET PASSWORD PANEL -->
+            <div id="page-reset-password" class="container hidden">
+                <div class="card" style="position:relative;">
+
+                    <h2 class="title">RESET PASSWORD</h2>
+
+                    <?php if (!empty($reset_error)): ?>
+                        <div class="php-error"><?= htmlspecialchars($reset_error) ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($reset_success)): ?>
+                        <div class="php-success"><?= htmlspecialchars($reset_success) ?></div>
+                    <?php endif; ?>
+
+                    <?php if ($reset_valid): ?>
+                    <form method="POST" action="?token=<?= htmlspecialchars($reset_token) ?>">
+                        <input type="hidden" name="reset_token"
+                            value="<?= htmlspecialchars($reset_token) ?>">
+
+                        <div class="input-group">
+                            <label>Password Baru</label>
+                            <div class="password-container">
+                                <input type="password" id="new_pass" name="new_pass"
+                                    placeholder="Minimal 6 karakter">
+                                <div class="eye-btn" onclick="toggleRegisterPass('new_pass', this)">
+                                    <img src="assets/img/mataTutup.png" alt="eye" class="eye-icon-img">
+                                </div>
+                            </div>
+                            <span class="error-msg" id="error-new_pass"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Konfirmasi Password Baru</label>
+                            <div class="password-container">
+                                <input type="password" id="confirm_pass" name="confirm_pass"
+                                    placeholder="Masukkan ulang password baru">
+                                <div class="eye-btn" onclick="toggleRegisterPass('confirm_pass', this)">
+                                    <img src="assets/img/mataTutup.png" alt="eye" class="eye-icon-img">
+                                </div>
+                            </div>
+                            <span class="error-msg" id="error-confirm_pass"></span>
+                        </div>
+
+                        <button type="submit" name="reset_password" class="btn-next"
+                                onclick="return validateReset()">
+                            Simpan Password Baru
+                        </button>
+                    </form>
+                    <?php endif; ?>
+
+                    <?php if (!empty($reset_success)): ?>
+                    <div style="text-align:center;margin-top:16px;">
+                        <span class="link-blue" style="cursor:pointer"
+                            onclick="switchPage('page-login')">← Kembali ke Login</span>
+                    </div>
+                    <?php endif; ?>
+
                 </div>
-
-                <h2 class="title">DAFTAR</h2>
-
-                <?php if (!empty($reg_error)): ?>
-                    <div class="php-error"><?= htmlspecialchars($reg_error) ?></div>
-                <?php endif; ?>
-                <?php if (!empty($reg_success)): ?>
-                    <div class="php-success"><?= htmlspecialchars($reg_success) ?></div>
-                <?php endif; ?>
-
-                <form method="POST" action="">
-                    <div class="input-group">
-                        <label>User Name</label>
-                        <input type="text" id="reg_user" name="reg_user" placeholder="Masukkan User Name anda"
-                               value="<?= htmlspecialchars($_POST['reg_user'] ?? '') ?>">
-                        <span class="error-msg" id="error-reg_user"></span>
-                    </div>
-                    <div class="input-group">
-                        <label>Email</label>
-                        <input type="email" id="reg_email" name="reg_email" placeholder="contoh: nama@gmail.com"
-                               value="<?= htmlspecialchars($_POST['reg_email'] ?? '') ?>">
-                        <span class="error-msg" id="error-reg_email"></span>
-                    </div>
-                    <div class="input-group">
-                        <label>Password</label>
-                        <div class="password-container">
-                            <input type="password" id="reg_pass" name="reg_pass" placeholder="Password minimal 6 karakter">
-                            <div class="eye-btn" onclick="toggleRegisterPass('reg_pass', this)">
-                                <img src="assets/img/mataTutup.png" alt="eye" class="eye-icon-img">
-                            </div>
-                        </div>
-                        <span class="error-msg" id="error-reg_pass"></span>
-                    </div>
-                    <div class="input-group">
-                        <label>Konfirmasi Password</label>
-                        <div class="password-container">
-                            <input type="password" id="reg_pass_confirm" name="reg_pass_confirm" placeholder="Masukkan ulang password anda">
-                            <div class="eye-btn" onclick="toggleRegisterPass('reg_pass_confirm', this)">
-                                <img src="assets/img/mataTutup.png" alt="eye" class="eye-icon-img">
-                            </div>
-                        </div>
-                        <span class="error-msg" id="error-reg_pass_confirm"></span>
-                    </div>
-                    <button type="submit" name="register" class="btn-next" onclick="return handleRegister()">Daftar</button>
-                </form>
             </div>
+
+
         </div>
+            
+        <script src="assets/Scripts/JS/script.js"></script>
+        <script>
+        // ── Inline password reveal (replaces the overlay approach) ──────────────
+        function openPasswordInline() {
+            const usernameVal = document.getElementById('username_login').value.trim();
+            const errEl = document.getElementById('error-username_login');
 
-    </div><div class="initialop" style="display:flex; justify-content:center; margin-top: 20px;">
-        <form method="POST" action="assets/initop.php">
-            <button type="submit" style="padding: 10px; cursor:pointer;">Init user</button>
-        </form>
-    </div>
-
-    <script src="assets/Scripts/JS/script.js"></script>
-    <script>
-    // ── Inline password reveal (replaces the overlay approach) ──────────────
-    function openPasswordInline() {
-        const usernameVal = document.getElementById('username_login').value.trim();
-        const errEl = document.getElementById('error-username_login');
-
-        if (!usernameVal) {
-            errEl.textContent = 'User Name tidak boleh kosong.';
-            return;
-        }
-        errEl.textContent = '';
-
-        document.getElementById('password-inline-group').classList.remove('hidden');
-        document.getElementById('forgot-login').style.display = 'block';
-        document.getElementById('btn-next-login').style.display = 'none';
-        document.getElementById('btn-submit-login').style.display = '';
-        document.getElementById('password-inline').focus();
-    }
-
-    // ── Client-side register validation ──
-    function handleRegister() {
-        const fields = [
-            { id: 'reg_user',         errId: 'error-reg_user',         label: 'User Name' },
-            { id: 'reg_email',        errId: 'error-reg_email',        label: 'Email' },
-            { id: 'reg_pass',         errId: 'error-reg_pass',         label: 'Password' },
-            { id: 'reg_pass_confirm', errId: 'error-reg_pass_confirm', label: 'Konfirmasi Password' },
-        ];
-
-        let valid = true;
-
-        fields.forEach(f => {
-            const el  = document.getElementById(f.id);
-            const err = document.getElementById(f.errId);
-            if (!el.value.trim()) {
-                err.textContent = f.label + ' tidak boleh kosong.';
-                valid = false;
-            } else {
-                err.textContent = '';
+            if (!usernameVal) {
+                errEl.textContent = 'User Name tidak boleh kosong.';
+                return;
             }
-        });
+            errEl.textContent = '';
 
-        // Email Format Validation
-        const emailEl = document.getElementById('reg_email');
-        if (emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
-            document.getElementById('error-reg_email').textContent = 'Format email tidak valid.';
-            valid = false;
+            document.getElementById('password-inline-group').classList.remove('hidden');
+            document.getElementById('forgot-login').style.display = 'block';
+            document.getElementById('btn-next-login').style.display = 'none';
+            document.getElementById('btn-submit-login').style.display = '';
+            document.getElementById('password-inline').focus();
         }
 
-        const pass    = document.getElementById('reg_pass').value;
-        const confirm = document.getElementById('reg_pass_confirm').value;
+        // ── Client-side register validation ──
+        function handleRegister() {
+            const fields = [
+                { id: 'reg_user',         errId: 'error-reg_user',         label: 'Username' },
+                { id: 'reg_email',        errId: 'error-reg_email',        label: 'Email' },
+                { id: 'reg_pass',         errId: 'error-reg_pass',         label: 'Password' },
+                { id: 'reg_pass_confirm', errId: 'error-reg_pass_confirm', label: 'Konfirmasi Password' },
+            ];
 
-        if (pass && confirm && pass !== confirm) {
-            document.getElementById('error-reg_pass_confirm').textContent = 'Password tidak cocok.';
-            valid = false;
+            let valid = true;
+
+            fields.forEach(f => {
+                const el  = document.getElementById(f.id);
+                const err = document.getElementById(f.errId);
+                if (!el.value.trim()) {
+                    err.textContent = f.label + ' tidak boleh kosong.';
+                    valid = false;
+                } else {
+                    err.textContent = '';
+                }
+            });
+
+            // Email Format Validation
+            const emailEl = document.getElementById('reg_email');
+            if (emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+                document.getElementById('error-reg_email').textContent = 'Format email tidak valid.';
+                valid = false;
+            }
+
+            const pass    = document.getElementById('reg_pass').value;
+            const confirm = document.getElementById('reg_pass_confirm').value;
+
+            if (pass && confirm && pass !== confirm) {
+                document.getElementById('error-reg_pass_confirm').textContent = 'Password tidak cocok.';
+                valid = false;
+            }
+
+            if (pass && pass.length < 6) {
+                document.getElementById('error-reg_pass').textContent = 'Password minimal 6 karakter.';
+                valid = false;
+            }
+
+            return valid; // allow form submit only when valid
         }
 
-        if (pass && pass.length < 6) {
-            document.getElementById('error-reg_pass').textContent = 'Password minimal 6 karakter.';
-            valid = false;
+        // ── Toggle password visibility ───────────────────────────────────────────
+        function toggleRegisterPass(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const img   = btn.querySelector('img');
+            if (input.type === 'password') {
+                input.type = 'text';
+                img.src = 'assets/img/mataBuka.png';
+            } else {
+                input.type = 'password';
+                img.src = 'assets/img/mataTutup.png';
+            }
         }
+        
+        // ── Validasi reset password ───────────────────────────────────────────────
+        function validateReset() {
+            const pass    = document.getElementById('new_pass').value;
+            const confirm = document.getElementById('confirm_pass').value;
+            const errPass = document.getElementById('error-new_pass');
+            const errConf = document.getElementById('error-confirm_pass');
+            let valid = true;
 
-        return valid; // allow form submit only when valid
-    }
+            errPass.textContent = '';
+            errConf.textContent = '';
 
-    // ── Toggle password visibility ───────────────────────────────────────────
-    function toggleRegisterPass(inputId, btn) {
-        const input = document.getElementById(inputId);
-        const img   = btn.querySelector('img');
-        if (input.type === 'password') {
-            input.type = 'text';
-            img.src = 'assets/img/mataBuka.png';
-        } else {
-            input.type = 'password';
-            img.src = 'assets/img/mataTutup.png';
+            if (pass.length < 6) {
+                errPass.textContent = 'Password minimal 6 karakter.';
+                valid = false;
+            }
+            if (pass !== confirm) {
+                errConf.textContent = 'Password tidak cocok.';
+                valid = false;
+            }
+        return valid;
+        }   
+
+        // ── Page switcher ────────────────────────────────────────────────────────
+        function switchPage(pageId) {
+            document.body.classList.remove('show-login', 'show-register' , 'show-forgot', 'show-reset' );
+
+            document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
+
+            document.getElementById(pageId).classList.remove('hidden');
         }
-    }
-
-    // ── Page switcher ────────────────────────────────────────────────────────
-    function switchPage(pageId) {
-        document.body.classList.remove('show-login', 'show-register');
-
-        document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
-
-        document.getElementById(pageId).classList.remove('hidden');
-    }
-    </script>
-</body>
-</html>
+        </script>
+    </body>
+    </html>

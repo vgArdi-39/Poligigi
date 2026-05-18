@@ -5,12 +5,11 @@ require_once 'assets/config.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-if (!$data) {
+if (empty($data) || !is_array($data)) {
     echo json_encode(['status' => 'error', 'message' => 'Data kosong']);
     exit;
 }
 
-// Get id_admin from session
 $id_admin = $_SESSION['id_admin'] ?? null;
 if (!$id_admin) {
     echo json_encode(['status' => 'error', 'message' => 'Session expired, silakan login ulang.']);
@@ -20,29 +19,27 @@ if (!$id_admin) {
 mysqli_begin_transaction($conn);
 
 try {
+    $stmt = mysqli_prepare($conn,
+        "INSERT INTO barang_masuk (id_barang, id_admin, jumlah, keterangan) VALUES (?, ?, ?, ?)"
+    );
+
     foreach ($data as $item) {
-        $nama   = mysqli_real_escape_string($conn, $item['nama']);
-        $qty    = (int)$item['qty'];
-        $ket    = mysqli_real_escape_string($conn, $item['ket']);
+        $id_barang  = intval($item['id_barang']  ?? 0);
+        $jumlah     = intval($item['jumlah']     ?? 0);
+        $keterangan = trim($item['keterangan']   ?? '');
 
-        // 1. Find id_barang by name
-        $res = mysqli_query($conn, "SELECT id_barang FROM barang WHERE nama_barang = '$nama' LIMIT 1");
-
-        if (mysqli_num_rows($res) === 0) {
-            throw new Exception("Barang '$nama' tidak terdaftar di database.");
+        if ($id_barang < 1 || $jumlah < 1) {
+            throw new Exception("Data tidak valid: id_barang=$id_barang, jumlah=$jumlah");
         }
 
-        $id_barang = mysqli_fetch_assoc($res)['id_barang'];
+        mysqli_stmt_bind_param($stmt, "iiis", $id_barang, $id_admin, $jumlah, $keterangan);
 
-        // 2. Insert into barang_masuk (stock is calculated automatically by v_stok view)
-        $sql = "INSERT INTO barang_masuk (id_barang, id_admin, jumlah, keterangan) 
-                VALUES ($id_barang, $id_admin, $qty, '$ket')";
-
-        if (!mysqli_query($conn, $sql)) {
-            throw new Exception("Gagal menyimpan: " . mysqli_error($conn));
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Gagal menyimpan: " . mysqli_stmt_error($stmt));
         }
     }
 
+    mysqli_stmt_close($stmt);
     mysqli_commit($conn);
     echo json_encode(['status' => 'success']);
 
