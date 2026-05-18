@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
     } elseif (empty($items)) {
         $error = "Keranjang kosong!";
     } else {
-        // Step 1: validate ALL items before touching DB
+
         foreach ($items as $item) {
             $id_barang = intval($item['id_barang']);
             $jumlah    = intval($item['jumlah']);
@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
             }
         }
 
-        // Step 2: insert only if all items passed validation
         if (!$error) {
             $stmt = $conn->prepare("INSERT INTO Permintaan_Barang (id_admin) VALUES (?)");
             $stmt->bind_param("i", $id_admin);

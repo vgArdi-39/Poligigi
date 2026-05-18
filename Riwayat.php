@@ -63,8 +63,8 @@ while ($r = mysqli_fetch_assoc($res_all_k)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat - Poli Gigi</title>
-    <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/riwayat.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
 <body>
     <div class="dashboard-wrapper">

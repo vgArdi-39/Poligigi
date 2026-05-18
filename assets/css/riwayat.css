@@ -239,3 +239,41 @@
 .btn-export:hover {
     background-color: var(--biru-muda);
 }
+
+.btn-search{
+    background-color: var(--biru-tua);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    height: 46px;
+    width: 91px;
+}
+
+.btn-search:hover {
+    background-color: var(--biru-muda);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
+}
+
+.btn-reset {
+    background-color: var(--biru-tua);
+    color: white;
+    border: none;
+    height: 46px;
+    width: 91px;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-reset:hover {
+    background-color: var(--biru-muda);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
+}

@@ -14,7 +14,7 @@
     align-items: stretch;
     justify-content: space-between;
     margin-bottom: 20px;
-    gap: 25%;
+    gap: 16px;
 }
 
 .total-jenis-container {
@@ -29,8 +29,9 @@
 }
 
 .total-jenis-container h2 {
-    font-size: 12px;
+    font-size: 16px;
     margin: 0;
+    font-weight: 600;
 }
 
 /* ─── SEARCH INPUT ───────────────────────────────────────── */
@@ -49,22 +50,27 @@
 /* data-barang.css alias — .search-container for pages using the flex wrapper */
 .search-container {
     display: flex;
-    flex: 1;
+    flex: 1; /* already there, good */
+    min-width: 0; /* prevents flex overflow squishing */
     padding: 12px 16px;
-    justify-content: flex-end;
+    justify-content: flex-start; /* was flex-end, which pushes input away */
     align-items: center;
     background-color: #DEDEDE;
     border-radius: 50px;
-    gap: 5px;
+    gap: 8px;
 }
 
 .search-container input {
     border: none;
     width: 100%;
+    min-width: 0;
     background-color: #DEDEDE;
     outline: none;
-    height: 50%;
     font-size: 16px;
+    font-family: 'Poppins', sans-serif; 
+    line-height: 1.5; 
+    padding: 2px 0; 
+    height: auto; 
 }
 
 .search-container svg {
@@ -247,7 +253,7 @@ table {
     font-size: 24px;
     font-weight: bold;
     cursor: pointer;
-    color: black;
+    color: rgb(255, 255, 255);
 }
 
 /* data-barang.css: .modal alias (compact modal variant) */

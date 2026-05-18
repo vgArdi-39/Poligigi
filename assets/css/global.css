@@ -142,3 +142,82 @@ body {
     padding: 20px;
     box-sizing: border-box;
 }
+
+
+/* ─── CHOICES.JS OVERRIDES ───────────────────────────────── */
+
+/* Base trigger box */
+.choices__inner {
+    background-color: var(--putih-biru);
+    border: 2px solid var(--biru-muda);
+    border-radius: 12px;
+    font-weight: 500;
+    transition: border-color 0.2s ease;
+}
+
+/* Trigger box when open */
+.choices.is-open .choices__inner {
+    border-color: var(--biru-tua);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* Dropdown container */
+.choices__list--dropdown {
+    border: 2px solid var(--biru-tua);
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background-color: white;
+    overflow: hidden;
+}
+
+/* Search input inside dropdown */
+.choices__list--dropdown .choices__input {
+    background-color: white;
+    border: none;
+    border-bottom: 2px solid var(--biru-muda);
+    padding: 10px 12px;
+    color: var(--biru-tua);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Dropdown items */
+.choices__list--dropdown .choices__item--choice {
+    background-color: var(--putih-biru); /* was white */
+    font-weight: 500;
+    padding: 10px 12px;
+    border-radius: 0;
+    transition: background-color 0.15s ease;
+}
+
+/* Dropdown container */
+.choices__list--dropdown {
+    border: 2px solid var(--biru-tua);
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background-color: var(--putih-biru); /* was white */
+    overflow: hidden;
+}
+
+/* Hide placeholder option in list */
+.choices__list--dropdown .choices__item--choice.choices__placeholder {
+    display: none;
+}
+
+/* Inline cloned input (the selected value display) */
+.choices__input--cloned {
+    background-color: transparent;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    padding: 0;
+}
+
+.choices__input--cloned:focus {
+    outline: none;
+}
