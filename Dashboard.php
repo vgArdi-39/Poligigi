@@ -77,7 +77,7 @@ $result = $conn->query("SELECT * FROM V_Stok ORDER BY jumlah_stok ASC");
                             if ($stok <= 0) {
                                 $status_text  = 'Habis';
                                 $status_class = 'status-danger';
-                            } elseif ($stok <= 10) {
+                            } elseif ($stok <= 5) {
                                 $status_text  = 'Hampir Habis';
                                 $status_class = 'status-warning';
                             } else {
