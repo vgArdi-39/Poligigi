@@ -11,11 +11,17 @@ if ($session->get('logged_in') !== true) {
 
 // ── Stats (from second) ──────────────────────────────────────────────────────
 $total_jenis = $conn->query("SELECT COUNT(*) AS c FROM Barang")->fetch_assoc()['c'];
-$total_stok  = $conn->query("SELECT SUM(jumlah_stok) AS s FROM v_stok")->fetch_assoc()['s'] ?? 0;
-$total_limit = $conn->query("SELECT COUNT(*) AS c FROM v_stok WHERE jumlah_stok <= 5 AND jumlah_stok > 0")->fetch_assoc()['c'];
+$stok_query  = "SELECT b.id_barang, b.nama_barang, b.satuan,
+    COALESCE(m.total_masuk,0) - COALESCE(k.total_keluar,0) AS jumlah_stok
+    FROM barang b
+    LEFT JOIN (SELECT id_barang, SUM(jumlah) AS total_masuk FROM barang_masuk GROUP BY id_barang) m ON b.id_barang = m.id_barang
+    LEFT JOIN (SELECT id_barang, SUM(jumlah) AS total_keluar FROM barang_keluar GROUP BY id_barang) k ON b.id_barang = k.id_barang";
 
-// ── Stock summary table (from first — uses V_Stok view) ─────────────────────
-$result = $conn->query("SELECT * FROM V_Stok ORDER BY jumlah_stok ASC");
+$total_stok  = $conn->query("SELECT SUM(jumlah_stok) AS s FROM ($stok_query) AS vs")->fetch_assoc()['s'] ?? 0;
+$total_limit = $conn->query("SELECT COUNT(*) AS c FROM ($stok_query) AS vs WHERE jumlah_stok <= 5 AND jumlah_stok > 0")->fetch_assoc()['c'];
+
+// ── Stock summary table ──────────────────────────────────────────────────────
+$result = $conn->query("$stok_query ORDER BY jumlah_stok ASC");
 ?>
 <!DOCTYPE html>
 <html lang="id">

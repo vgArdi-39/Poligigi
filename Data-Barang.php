@@ -76,7 +76,14 @@ $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : 
 $where_clause  = $search !== '' ? "WHERE nama_barang LIKE '%$search%' OR satuan LIKE '%$search%'" : '';
 
 // Query mengambil SEMUA data tanpa LIMIT
-$result = $conn->query("SELECT * FROM v_stok $where_clause ORDER BY nama_barang ASC");
+$stok_query = "SELECT b.id_barang, b.nama_barang, b.satuan,
+    COALESCE(m.total_masuk,0) - COALESCE(k.total_keluar,0) AS jumlah_stok
+    FROM barang b
+    LEFT JOIN (SELECT id_barang, SUM(jumlah) AS total_masuk FROM barang_masuk GROUP BY id_barang) m ON b.id_barang = m.id_barang
+    LEFT JOIN (SELECT id_barang, SUM(jumlah) AS total_keluar FROM barang_keluar GROUP BY id_barang) k ON b.id_barang = k.id_barang";
+
+$having_clause = $search !== '' ? "HAVING nama_barang LIKE '%$search%' OR satuan LIKE '%$search%'" : '';
+$result = $conn->query("$stok_query $having_clause ORDER BY nama_barang ASC");
 
 // Menghitung total keseluruhan jenis barang di Database
 $total_query = $conn->query("SELECT COUNT(*) AS c FROM barang");

@@ -7,10 +7,11 @@
     use PHPMailer\PHPMailer\Exception;
 
 
+    $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
     $session = new Session();
 
     if ($session->get('logged_in') === true) {
-        header("Location: dashboard.php");
+        header("Location: $base/dashboard.php");
         exit();
     }
 
@@ -34,7 +35,7 @@
                 $session->set('username', $user['username']);
                 $session->set('email', $user['email']);
                 $session->set('id_admin', $user['id_admin']);
-                header("Location: dashboard.php");
+                header("Location: $base/dashboard.php");
                 exit();
             } else {
                 $error = "Username atau password salah.";
@@ -132,15 +133,15 @@
                     $mail->SMTPAuth   = true;
                     $mail->Username   = $MailerMail;
                     $mail->Password   = $MailerPassword;
-                    $mail->SMTPSecure = 'tls';
-                    $mail->Port       = 587;
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                    $mail->Port       = 465;
 
                     $mail->setFrom($MailerMail, 'Poliklinik Admin');
                     $mail->addAddress($forgot_email);
                     $mail->Subject = 'Reset Password - Sistem Poliklinik';
 
                     // Link points back to index.php with the token
-                    $reset_link = "http://localhost/poligigi/index.php?token=" . $token;
+                    $reset_link = "https://" . $_SERVER['HTTP_HOST'] . "/index.php?token=" . $token;
                     $mail->isHTML(true);
                     $mail->Body = "
                         <p>Klik link berikut untuk mereset password Anda:</p>
@@ -158,7 +159,7 @@
             $stmt->close();
             $forgot_success = "Jika email terdaftar, link reset password telah dikirim.";
 
-            header("Location: index.php?forgot=sent");
+            header("Location: $base/index.php?forgot=sent");
             exit();
         }
 
@@ -301,7 +302,7 @@
                         <div class="php-error"><?= htmlspecialchars($error) ?></div>
                     <?php endif; ?>
 
-                    <form method="POST" action="" id="login-form">
+                    <form method="POST" action="index.php" id="login-form">
                         <div class="input-group">
                             <label>User Name</label>
                             <input
@@ -366,7 +367,7 @@
                         <div class="php-success"><?= htmlspecialchars($reg_success) ?></div>
                     <?php endif; ?>
 
-                    <form method="POST" action="">
+                    <form method="POST" action="index.php">
                         <div class="input-group">
                             <label>Username</label>
                             <input type="text" id="reg_user" name="reg_user" placeholder="Masukkan Username anda"
@@ -425,7 +426,7 @@
                     <?php endif; ?>
 
                     <?php if (empty($forgot_success)): ?>
-                    <form method="POST" action="">
+                    <form method="POST" action="index.php">
                         <div class="input-group">
                             <label>Email</label>
                             <input type="email" name="forgot_email"
@@ -460,7 +461,7 @@
                     <?php endif; ?>
 
                     <?php if ($reset_valid): ?>
-                    <form method="POST" action="?token=<?= htmlspecialchars($reset_token) ?>">
+                    <form method="POST" action="index.php?token=<?= htmlspecialchars($reset_token) ?>">
                         <input type="hidden" name="reset_token"
                             value="<?= htmlspecialchars($reset_token) ?>">
 
