@@ -171,3 +171,25 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+.btn-main:hover {
+    background-color: var(--biru-tua);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: var(--biru-tua);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
+}
+
+.btn-confirm:hover {
+    background-color: var(--biru-tua);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
+}
+
+.close-modal{
+    color: white;
+}

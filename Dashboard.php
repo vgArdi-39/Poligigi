@@ -22,7 +22,8 @@ $result = $conn->query("SELECT * FROM V_Stok ORDER BY jumlah_stok ASC");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Polinventory</title>
+    <title>Dashboard - Poli Gigi</title>
+    <link rel="icon" href="assets/img/logo_polije.png">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
@@ -55,7 +56,7 @@ $result = $conn->query("SELECT * FROM V_Stok ORDER BY jumlah_stok ASC");
             </div>
         </div>
 
-        <!-- Stock Summary (first's scrollable card + second's status badges) -->
+        <!-- Stock Summary -->
         <div class="Ringkasan-Stok-Barang">
             <h2 style="padding-bottom:20px;">Ringkasan Stok Barang</h2>
             <table class="summary-stok-table">

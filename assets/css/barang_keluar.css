@@ -140,3 +140,15 @@
 
 .btn-edit-action { background-color: #ffc107; border: none; padding: 7px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 .btn-delete-action { background-color: #dc3545; color: white; border: none; padding: 7px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+.btn-pdf:hover, .btn-excel:hover, .btn-confirm:hover {
+    background-color: var(--biru-tua);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
+}
+
+.btn-add-list:hover {
+    background-color: var(--biru-tua);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
+}

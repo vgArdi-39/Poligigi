@@ -75,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
 $where_clause  = $search !== '' ? "WHERE nama_barang LIKE '%$search%' OR satuan LIKE '%$search%'" : '';
 
-// Query mengambil SEMUA data tanpa LIMIT
 $result = $conn->query("SELECT * FROM v_stok $where_clause ORDER BY nama_barang ASC");
 
 // Menghitung total keseluruhan jenis barang di Database
@@ -88,7 +87,8 @@ $total       = $total_query ? $total_query->fetch_assoc()['c'] : 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Barang - Polinventory</title>
+    <title>Data Barang - Poli Gigi</title>
+    <link rel="icon" href="assets/img/logo_polije.png">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/data-barang.css">
 </head>

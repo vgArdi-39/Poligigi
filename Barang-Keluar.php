@@ -85,7 +85,8 @@ $barang_json = json_encode($barang_list);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barang Keluar - Polinventory</title>
+    <title>Barang Keluar - Poli Gigi</title>
+    <link rel="icon" href="assets/img/logo_polije.png">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/data-barang.css">
     <link rel="stylesheet" href="assets/css/barang_keluar.css">
@@ -187,6 +188,8 @@ $barang_json = json_encode($barang_list);
             border-radius: 0 !important;
         }
     </style>
+
+    <!-- PDF template-->
 
     <div class="judul" style="text-align: center; display: flex; flex-direction: row; align-items: center; gap: 15px;justify-content: center;">
     <img src="assets/img/LogoPOLIJE.png" alt="Logo" style="width: 80px; height: auto; margin-bottom: 10px;">

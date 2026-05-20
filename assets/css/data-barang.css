@@ -120,6 +120,17 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.btn-add:hover {
+    background-color: var(--biru-tua);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
+}   
+
+.btn-simpan :hover {
+    background-color: var(--biru-muda);
+    box-shadow: 0 6px 20px rgba(73, 136, 196, 0.5);
+    transition: 0.2s;
+} 
 /* ─── TABLE CONTAINER ────────────────────────────────────── */
 /* data_barang.css (priority) */
 .table-container {
@@ -362,4 +373,10 @@ table {
     background-color: white !important;
     color: #0F2854 !important;
     border: 1px solid #0F2854 !important;
+}
+
+.btn-simpan :hover {
+    background-color: var(--biru-tua);
+    box-shadow: 0 6px 20px rgba(73, 136, 196, 0.5);
+    transition: 0.2s;
 }

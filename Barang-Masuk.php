@@ -47,7 +47,8 @@ while ($r = $query_produk->fetch_assoc()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barang Masuk - Polinventory</title>
+    <title>Barang Masuk - Poli Gigi</title>
+    <link rel="icon" href="assets/img/logo_polije.png">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/data-barang.css">
     <link rel="stylesheet" href="assets/css/barang_masuk.css">
@@ -141,7 +142,7 @@ while ($r = $query_produk->fetch_assoc()) {
         </div>
         <div class="modal-body">
             <p style="margin-bottom:15px;font-size:14px;">
-                Pilih file Excel (.xlsx) dengan header: <b>Nama, Jumlah, Satuan</b>
+                Pilih file Excel (.xlsx) dengan header: <b>Nama, Jumlah, Keterangan</b>
             </p>
             <input type="file" id="fileExcelInput" accept=".xlsx,.xls" class="input-file-modal">
             <button type="button" class="btn-execute-import" onclick="prosesImportExcel()">Mulai Import</button>

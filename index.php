@@ -98,7 +98,7 @@
     if (isset($_GET['forgot']) && $_GET['forgot'] === 'sent') {
     $forgot_success = "Jika email terdaftar, link reset password telah dikirim.";
     }
-
+    
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['forgot_password'])) {
         $forgot_email = trim($_POST['forgot_email'] ?? '');
 
@@ -243,7 +243,8 @@
         <meta charset="UTF-8">
         <link rel="icon" href="data:,">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sistem Login Poliklinik</title>
+        <title>Login</title>
+        <link rel="icon" href="assets/img/logo_polije.png">
         <link rel="stylesheet" href="assets/css/style.css">
         <style>
             /* ── PHP error banner ── */

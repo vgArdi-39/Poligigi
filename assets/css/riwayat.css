@@ -76,8 +76,9 @@
 /* Pagination di Sebelah Kanan */
 .pagination-wrapper {
     display: flex;
-    justify-content: flex-end;
     margin-top: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
 }
 
 .pagination {
@@ -237,7 +238,9 @@
 }
 
 .btn-export:hover {
-    background-color: var(--biru-muda);
+    background-color: var(--biru-tua);
+    box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
+    transition: 0.2s;
 }
 
 .btn-search{
@@ -254,7 +257,7 @@
 }
 
 .btn-search:hover {
-    background-color: var(--biru-muda);
+    background-color: var(--biru-tua);
     box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
     transition: 0.2s;
 }
@@ -273,7 +276,7 @@
 }
 
 .btn-reset:hover {
-    background-color: var(--biru-muda);
+    background-color: var(--biru-tua);
     box-shadow: 0 6px 20px rgba(15, 40, 84, 0.5);
     transition: 0.2s;
 }
